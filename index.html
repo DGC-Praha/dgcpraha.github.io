@@ -3,20 +3,36 @@
 
 <style>
     .ul-table {
-        list-style-type: none; /* disc !important */;
+        list-style-type: none;
+        /* disc !important */
+        ;
     }
 
     .li-table {
         list-style-position: inside;
     }
-    
-    .margin-both {
-        margin-left: 10px;
-        margin-right: 10px;
-    }
 
     .noverflow {
         overflow: hidden;
+    }
+
+    .margin-top {
+        margin-top: 10px;
+    }
+
+    .margin-both {
+        margin-left: 10px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+    }
+
+    table {
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    .text-left {
+        text-align: left;
     }
 </style>
 
@@ -62,7 +78,7 @@
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav text-uppercase ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger" href="aktuality.html">Aktuality</a>
+                        <a class="nav-link js-scroll-trigger" href="#aktuality">Aktuality</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link js-scroll-trigger" href="bodovy_system.html">Bodový systém</a>
@@ -98,6 +114,62 @@
 
     <!-- Aktuality -->
     <!-- TODO: Pridat IG feed -->
+    <section class="page-section bg-light" id="aktuality">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading text-uppercase">Aktuality</h2>
+                </div>
+            </div>
+        </div>
+        <div class="container mb-10">
+            <div class="row">
+                <div class="col-md-6 noverflow">
+                    <iframe
+                        src="https://calendar.google.com/calendar/embed?src=dgcpraha%40gmail.com&ctz=Europe%2FPrague"
+                        style="border: 0" width="500" height="605" frameborder="0" scrolling="no"></iframe>
+                </div>
+                <div class="col-md-6 noverflow">
+                    <iframe
+                        src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fdgcpraha&tabs=timeline&width=500&height=600&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=true"
+                        width="500" height="300" style="border:none" scrolling="no" frameborder="0"
+                        allowfullscreen="true"
+                        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+
+                    <iframe
+                    src="https://www.instagram.com/discgolfclubpraha/embed"
+                        width="500" height="300" style="border:none" scrolling="no" frameborder="0"
+                        allowfullscreen="true"
+                        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+                </div>
+            </div>
+        </div>
+        <div class="container mb-10" id="kalendare">
+            <div class="row margin-top">
+                K dispozici ke stažení jsou níže kalendáře lig pro rok 2025.
+            </div>
+            <div class="row margin-top">
+                <a class="btn btn-outline-primary margin-both" target="_blank"
+                    href="https://calendar.google.com/calendar/u/0?cid=MDFjZDlkNDI5MmI1YTE0MzFiZTA1NjhiMDAxYmMwMmU3MTJkOGY0NjZjODU5MTc2YjRiMmYyZGYxODQxMGUxZEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t">Kalendář
+                    ADL 2025</a>
+                <a class="btn btn-outline-primary margin-both" target="_blank"
+                    href="https://calendar.google.com/calendar/u/0?cid=NWZkMDMxZjBiMjg4NDE4Nzc0ZWU0NDRjNmFjNGY3NjQ4MTNmMTA1ZjQxY2QwMTk0NGJhMzdhZTM5ZGM0YjQ3NEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t">Kalendář
+                    CDGT 2025</a>
+                <a class="btn btn-outline-primary margin-both" target="_blank"
+                    href="https://calendar.google.com/calendar/u/0?cid=ZjViN2U2ZWY5MmY1NDc3OGJiYjBiMzhlYTIxMjVkMTc5NWIxMTI5ZGZiMjhlM2ViMjg2YTYxMmRlZGU2NTA2NUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t">Kalendář
+                    MČR 2025</a>
+                <a class="btn btn-outline-primary margin-both" target="_blank"
+                    href="https://calendar.google.com/calendar/u/0?cid=ZmNmNGZiNzI4MDVmYWIxZTEwOTNlYWIxZDQ4M2QzMWUxMmYzMDkzYThjZWJkZTU3MjMyOTYxZjAyZTQxODAzN0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t">Kalendář
+                    neligových turnajů 2025</a>
+                <a class="btn btn-outline-primary margin-both" target="_blank"
+                    href="https://calendar.google.com/calendar/u/0?cid=YmVjYThhYTAyMGE2MDIxMjgwMjY5YzkyNmQ2N2FmOTU1ZmZjYzYyNWViN2QwZDM3OGJlMWQ1MzBkNGVhNjFmNkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t">Kalendář
+                    PADL 2025</a>
+                <a class="btn btn-outline-primary margin-both" target="_blank"
+                    href="https://calendar.google.com/calendar/u/0?cid=Njk0OTdjNDNmOTA5Mzg0YmZjZjBjODE0YzI2NDljMGQxNTMwY2Q5Y2Y2Y2U0YWIzNDVkZTc4ZmZiNTgwMmIxOEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t">Kalendář
+                    PDGL 2025</a>
+            </div>
+        </div>
+    </section>
 
     <!-- O nas -->
     <section class="page-section" id="onas">
@@ -260,7 +332,8 @@
                                         <li class="li-table">50% sleva na členský příspěvek DGCP</li>
                                         <li class="li-table">sleva na oficiální akce DGCP</li>
                                         <li class="li-table">sleva na akce podporované DGCP</li>
-                                        <li class="li-table">jeden kus malého merche zdarma (sport sack, ponožky atd.)</li>
+                                        <li class="li-table">jeden kus malého merche zdarma (sport sack, ponožky atd.)
+                                        </li>
                                     </ul>
                                 </td>
                                 <td>3500 Kč</td>
@@ -297,7 +370,8 @@
                         Bodový systém
                     </a>
 
-                    <a class="btn btn-xl btn-primary mt-3 margin-both" href="https://forms.gle/1EamaiqDLtE96piL7" target="_blank">
+                    <a class="btn btn-xl btn-primary mt-3 margin-both" href="https://forms.gle/1EamaiqDLtE96piL7"
+                        target="_blank">
                         <i class="fa fa-address-card"></i>
                         Přihláška do klubu
                     </a>
@@ -319,6 +393,50 @@
                         Členství se stává platným zaplacením členského příspěvku, nebo ziskem členství při dosažení
                         kategorie Diamond v předchozím roce.
                     </p>
+
+                    <h4 class="service-heading">Podpora juniorů</h4>
+                    <div class="text-left">
+                        <p>Celkový rozpočet na podporu juniorů v DGCP v roce 2025 činí 10.000 Kč. Pro potřeby rozdělení
+                            prostředků je uvažována účast na následujících turnajích:</p>
+                        <ul>
+                            <li><b>CDGT</b>,</li>
+                            <li><b>ADL</b>, </li>
+                            <li><b>MČR juniorů</b>, <b>MČR open</b>, <b>MČR amatérů</b>.</li>
+                        </ul>
+                        <p>
+                            Rozdělení prostředků proběhne zpětně po proběhnutí všech turnajů do 31.10.2025 podle
+                            následujících
+                            pravidel:</p>
+                        <ol type="1">
+                            <li><b>7.000 Kč je vyčleněno na reprezentaci klubu</b></li>
+                            <ol type="a">
+                                <li>za každý odehraný turnaj má junior nárok na proplacení půlky startovného</li>
+                                <li>maximální výše roční podpory jednoho juniora činí 1.500 Kč </li>
+                                <li>pokud by mělo dojít k přečerpání prostředků v rozpočtu, tak se rozdělí poměrově mezi
+                                    juniory podle počtu absolvovaných turnajů</li>
+                            </ol>
+                            <li><b>3.000 Kč je vyčleněno na výsledkový bonus daný pořadím v turnaji</b></li>
+                            <ol type="a">
+                                <li>Umístění na bedně: 200 Kč</li>
+                                <li>Umístění v Q1 (1. čtvrtina účastníků hráčovy kategorie): 100 Kč</li>
+                                <li>Umístění v Q2 (2. čtvrtina účastníků hráčovy kategorie): 50 Kč </li>
+                                <li>maximální výše roční podpory jednoho juniora činí 1.500 Kč </li>
+                            </ol>
+                        </ol>
+                        <p><b>Závěrečné poznámky</b></p>
+                        <ol type="A">
+                            <li>Podmínkou pro čerpání podpory je reprezentace klubu alespoň klubovým tričkem minimálně
+                                na
+                                vyhlášení
+                                vítězů, nejlépe i při hře. </li>
+                            <li>Při úspěšné dlouhodobé reprezentaci klubu má člen nárok na klubový merch zdarma. </li>
+                            <li>Podpora za reprezentaci se netýká turnajů, které mají hráči již zvýhodněné ze strany
+                                jiného
+                                subjektu, typicky jejich sponzora (například Ultimo / Prodiscgolf). Podpora za výsledky
+                                není sponzorstvím omezena. </li>
+                            <li>Zbylé finance budou převedeny do rozpočtu pro podporu juniorů na rok 2026.</li>
+                        </ol>
+                    </div>
                 </div>
             </div>
 
@@ -388,7 +506,8 @@
 
             <div class="row text-center">
                 <div class="col-lg-12 noverflow">
-                    <iframe style="border:none" src="https://frame.mapy.cz/s/dotonabore" width="500" height="333" frameborder="0"></iframe>
+                    <iframe style="border:none" src="https://frame.mapy.cz/s/dotonabore" width="500" height="333"
+                        frameborder="0"></iframe>
                 </div>
             </div>
 
@@ -400,7 +519,7 @@
                         Tramvaj: linky 7, 12 stanice Hloubětín (přibližně 150m od stanice metra);
                         Autobus: 110, 141 a 259
                     </p>
-                    
+
                     <!-- <a class="btn btn-xl btn-outline-primary" href="https://mapy.cz/s/buvajegaso">Bazén Hloubětín na mapě</a> -->
                     <!-- <iframe style="border:none" src="https://frame.mapy.cz/s/balajakaza" width="500" height="333" frameborder="0"></iframe> -->
 
