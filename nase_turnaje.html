@@ -1,16 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<style>
-    .noverflow {
-        overflow: hidden;
-    }
-
-    table {
-        margin-left: auto !important;
-        margin-right: auto !important;
-    }
-</style>
+<html lang="cs">
 
 <head>
 
@@ -34,6 +23,28 @@
 
     <!-- Custom styles for this template -->
     <link href="css/agency.min.css" rel="stylesheet">
+
+    <style>
+        .noverflow {
+            overflow: hidden;
+        }
+
+        table {
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+
+        #ligy hr {
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #ccc, transparent);
+        }
+
+        #ligy hr.page-title-divider {
+            height: 2px;
+            background: linear-gradient(to right, transparent, #003d99, transparent);
+        }
+    </style>
 </head>
 
 <body id="page-top">
@@ -65,6 +76,9 @@
                         <a class="nav-link js-scroll-trigger" href="index.html#treninky">Tréninky</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="nase_turnaje.html">Akce</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link js-scroll-trigger" href="index.html#partneri">Partneři</a>
                     </li>
                     <li class="nav-item">
@@ -75,17 +89,19 @@
         </div>
     </nav>
 
-    <section class="page-section" id="ligy">
+    <section class="page-section" id="ligy" style="padding-top: 140px;">
         <div class="container">
             <div class="row">
-                <div class="col-lg-12 text-center">
+                <div class="col-lg-12 text-center mb-4">
                     <h2 class="section-heading text-uppercase">Pořádané ligy</h2>
+                    <h3 class="section-subheading text-muted mb-0">Přehled turnajových sérií pořádaných DGC Praha</h3>
+                    <hr class="page-title-divider mt-3">
                 </div>
             </div>
         </div>
-        <div class="container mb-10" id="PDGL">
+        <div class="container mb-4" id="PDGL">
             <div class="row">
-                <h3 class="section-heading text-uppercase">Pražská Discgolfová Liga (PDGL)</h3>
+                <h3 class="section-heading text-uppercase mb-3">Pražská Discgolfová Liga (PDGL)</h3>
             </div>
             <div class="row">
                 <div class="col-md-6 noverflow">
@@ -105,12 +121,12 @@
                         allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
                 </div>
             </div>
-            <hr>
+            <hr class="my-5">
         </div>
 
-        <div class="container mb-10" id="PADL">
+        <div class="container mb-4" id="PADL">
             <div class="row">
-                <h3 class="section-heading text-uppercase">Pražská Amatérská Discgolfová Liga (PADL)</h3>
+                <h3 class="section-heading text-uppercase mb-3">Pražská Amatérská Discgolfová Liga (PADL)</h3>
             </div>
             <div class="row">
                 <div class="col-md-6 noverflow">
@@ -129,12 +145,12 @@
                         allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
                 </div>
             </div>
-            <hr>
+            <hr class="my-5">
         </div>
 
-        <div class="container mb-10" id="PDL">
+        <div class="container mb-4" id="PDL">
             <div class="row">
-                <h3 class="section-heading text-uppercase">Pražská Doubles Liga</h3>
+                <h3 class="section-heading text-uppercase mb-3">Pražská Doubles Liga</h3>
             </div>
             <div class="row">
                 <div class="col-md-6 noverflow">
@@ -152,36 +168,12 @@
                         allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
                 </div>
             </div>
-            <hr>
+            <hr class="my-5">
         </div>
 
-        <div class="container mb-10" id="PSG">
+        <div class="container mb-4" id="MVP_ADS">
             <div class="row">
-                <h3 class="section-heading text-uppercase">Prague Skill Games (PSG)</h3>
-            </div>
-            <div class="row">
-                <div class="col-md-6 noverflow">
-                    <p>Série speciálních turnajů, kde se experimentuje s neobvyklými formáty. Jedná se o pohodové akce
-                        určené pro hráče všech úrovní, kteří si discgolf chtějí trochu zpestřit a užít si pohodovou
-                        atmosféru. V minulosti se hrály např. putter only turnaje, speciální puttovací turnaj v laser
-                        game aréně apod.</p>
-                    <p hidden>Propozice PSG na iDiscgolfu <a target="_blank"
-                            href="https://idiscgolf.cz/ligy/166">zde</a>.</p>
-                </div>
-                <div class="col-md-6 noverflow">
-                    <iframe
-                        src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fprofile.php?id=61558326175221&tabs=timeline&width=500&height=300&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=true"
-                        width="500" height="300" style="border:none;overflow:hidden" scrolling="no" frameborder="0"
-                        allowfullscreen="true"
-                        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
-                </div>
-            </div>
-            <hr>
-        </div>
-
-        <div class="container mb-10" id="MVP_ADS">
-            <div class="row">
-                <h3 class="section-heading text-uppercase">MVP After Dark Series</h3>
+                <h3 class="section-heading text-uppercase mb-3">MVP After Dark Series</h3>
             </div>
             <div class="row">
                 <div class="col-md-6 noverflow">
@@ -199,7 +191,28 @@
                         allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
                 </div>
             </div>
-            <hr>
+            <hr class="my-5">
+        </div>
+
+        <div class="container mb-4" id="jamkovka">
+            <div class="row">
+                <h3 class="section-heading text-uppercase mb-3">Klubová Jamkovka</h3>
+            </div>
+            <div class="row">
+                <div class="col-md-6 noverflow">
+                    <p>Celoroční klubová soutěž, kde se hráči potkávají se soupeři podle toho, jak postupují
+                        vyřazovacím pavoukem s možností opravy. Na konci se vyhlásí „Mistr klubu ve hře na jamky".
+                        Soupeři se domluví na libovolném hřišti a odehrají 18 jamek ve formátu hry na jamky — hráč
+                        s nižším skóre na jamce získává bod. Soutěž je otevřena všem členům DGC Praha se zaplaceným
+                        členstvím.</p>
+                    <p>Webové stránky Klubové Jamkovky <a target="_blank"
+                            href="https://jamkovka.dgcp.cz/">zde</a>.</p>
+                </div>
+                <div class="col-md-6 noverflow d-flex align-items-center justify-content-center">
+                    <img src="img/logo/dgcp-logo-final-black.png" alt="DGC Praha"
+                        style="width: 250px; height: 250px; object-fit: contain; opacity: 0.2;">
+                </div>
+            </div>
         </div>
     </section>
 
