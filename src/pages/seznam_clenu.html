@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<style>
+    table {
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+</style>
+
+<head>
+@@include('partials/head.html', {"title": "DGC Praha – Disc Golf Club Praha", "basePath": "."})
+
+    <script>
+        function includeHTML() {
+            var z, i, elmnt, file, xhttp;
+            /* Loop through a collection of all HTML elements: */
+            z = document.getElementsByTagName("*");
+            for (i = 0; i < z.length; i++) {
+                elmnt = z[i];
+                /*search for elements with a certain atrribute:*/
+                file = elmnt.getAttribute("dgcp-include-html");
+                if (file) {
+                    /* Make an HTTP request using the attribute value as the file name: */
+                    xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function () {
+                        if (this.readyState == 4) {
+                            if (this.status == 200) {
+                                elmnt.innerHTML = this.responseText;
+                                nextThingsToDo()
+                            }
+                            if (this.status == 404) {
+                                elmnt.innerHTML = "Page not found.";
+                            }
+                            /* Remove the attribute, and call this function once more: */
+                            elmnt.removeAttribute("dgcp-include-html");
+                            includeHTML();
+                        }
+                    }
+                    xhttp.open("GET", file, true);
+                    xhttp.send();
+                    /* Exit the function: */
+                    return;
+                }
+            }
+        }
+
+        function nextThingsToDo() {
+            scrollToAnchor("seznam");
+            colorActiveMembers();
+        }
+
+        function scrollToAnchor(anchor) {
+            let element_to_scroll_to = document.getElementById(anchor);
+            element_to_scroll_to.scrollIntoView();
+        }
+
+        function colorActiveMembers() {
+            ap = document.getElementsByTagName('td')
+            for (i = 0; i < ap.length; i++) {
+                a = ap[i];
+                if (a.innerText == "Aktivní") {
+                    a.style.backgroundColor = "#c4ffc4";
+                } else if (a.innerText.toLowerCase() == "bronze") {
+                    a.style.backgroundColor = "#f6b26b";
+                } else if (a.innerText.toLowerCase() == "silver") {
+                    a.style.backgroundColor = "#cccccc";
+                } else if (a.innerText.toLowerCase() == "gold") {
+                    a.style.backgroundColor = "#ffd700";
+                }
+            }
+        }
+    </script>
+
+</head>
+
+<body id="page-top">
+
+@@include('partials/nav.html', {"basePath": "."})
+
+    <!-- Services -->
+    <section class="page-section" id="seznam">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading text-uppercase">Seznam členů</h2>
+                </div>
+            </div>
+            <div class="row mx-auto"
+                dgcp-include-html="https://docs.google.com/spreadsheets/d/1dXTJ62G1-yoLsRPmrL4SbG7Nv02zlnrxAeMyzFb5ets/gviz/tq?tqx=out:html&tq&gid=1275437132">
+            </div>
+        </div>
+    </section>
+
+    <script>
+        includeHTML();
+    </script>
+
+@@include('partials/footer.html')
+@@include('partials/scripts.html', {"basePath": "."})
+
+</body>
+
+</html>

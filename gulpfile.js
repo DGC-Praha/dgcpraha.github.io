@@ -12,6 +12,7 @@ const plumber = require("gulp-plumber");
 const rename = require("gulp-rename");
 const sass = require("gulp-sass")(require("sass"));
 const uglify = require("gulp-uglify");
+const fileinclude = require("gulp-file-include");
 
 // Load package.json for banner
 const pkg = require('./package.json');
@@ -115,21 +116,33 @@ function js() {
     .pipe(browsersync.stream());
 }
 
+// HTML task - compile templates from src/pages to root
+function html() {
+  return gulp
+    .src(['./src/pages/**/*.html'])
+    .pipe(fileinclude({
+      prefix: '@@',
+      basepath: './src/'
+    }))
+    .pipe(gulp.dest('./'));
+}
+
 // Watch files
 function watchFiles() {
   gulp.watch("./scss/**/*", css);
   gulp.watch(["./js/**/*", "!./js/**/*.min.js"], js);
-  gulp.watch("./**/*.html", browserSyncReload);
+  gulp.watch("./src/**/*.html", gulp.series(html, browserSyncReload));
 }
 
 // Define complex tasks
 const vendor = gulp.series(clean, modules);
-const build = gulp.series(vendor, gulp.parallel(css, js));
+const build = gulp.series(vendor, gulp.parallel(css, js, html));
 const watch = gulp.series(build, gulp.parallel(watchFiles, browserSync));
 
 // Export tasks
 exports.css = css;
 exports.js = js;
+exports.html = html;
 exports.clean = clean;
 exports.vendor = vendor;
 exports.build = build;

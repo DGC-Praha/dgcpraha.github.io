@@ -1,68 +1,113 @@
-# Editace pro mírně pokročilé
-
-- pokud nejsi přihlášen na GitHub, přihlaš se 
-- otevři soubor `index.html` v repozitáři `dgcpraha/dgcpraha.github.io` [-LINK-](https://github.com/dgcpraha/dgcpraha.github.io/blob/master/index.html)
-- stiskni tlačítko "Edit this file" (ikonka tužky vpravo nad částí s kódem) 
-- uprav co je potřeba
-- dole v části "Commit changes" stručně popiš v čem spočívá tvoje úprava
-- stiskni tlačítko "Propose file change"
-- na další stránce klikni "Create pull request"
-- požádej někoho ze správců aby změny potvrdil
-- vyčkej až je potvrdí + cca 2 minuty a bude to online
-
-
-
 # DGCP website
 
-Based on [Agency](https://startbootstrap.com/template-overviews/agency/) theme
+Web Disc Golf Clubu Praha — [dgcp.cz](https://dgcp.cz)
 
-## Status
+---
 
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/BlackrockDigital/startbootstrap-agency/master/LICENSE)
-[![npm version](https://img.shields.io/npm/v/startbootstrap-agency.svg)](https://www.npmjs.com/package/startbootstrap-agency)
-[![Build Status](https://travis-ci.org/BlackrockDigital/startbootstrap-agency.svg?branch=master)](https://travis-ci.org/BlackrockDigital/startbootstrap-agency)
-[![dependencies Status](https://david-dm.org/BlackrockDigital/startbootstrap-agency/status.svg)](https://david-dm.org/BlackrockDigital/startbootstrap-agency)
-[![devDependencies Status](https://david-dm.org/BlackrockDigital/startbootstrap-agency/dev-status.svg)](https://david-dm.org/BlackrockDigital/startbootstrap-agency?type=dev)
+## Editace přes GitHub (bez instalace)
 
-## Usage
+Pro jednoduché úpravy obsahu stránek nepotřebujete nic instalovat. Stačí webový prohlížeč a účet na GitHubu.
 
-### Basic Usage
+### Kde najdu soubory k editaci
 
-After downloading, simply edit the HTML and CSS files included with the template in your favorite text editor to make changes. These are the only files you need to worry about, you can ignore everything else! To preview the changes you make to the code, you can open the `index.html` file in your web browser.
+Veškeré stránky webu se nacházejí ve složce [`src/pages/`](https://github.com/dgcpraha/dgcpraha.github.io/tree/master/src/pages):
 
-### Advanced Usage
+| Soubor | Stránka |
+|--------|---------|
+| `src/pages/index.html` | Hlavní stránka |
+| `src/pages/krouzek.html` | Kroužek discgolfu |
+| `src/pages/nase_turnaje.html` | Pořádané ligy a turnaje |
+| `src/pages/instrukce_slevy.html` | Jak uplatnit slevy u partnerů |
+| `src/pages/seznam_clenu.html` | Seznam členů |
+| `src/pages/navrhni-dres.html` | Soutěž o návrh dresu |
 
-After installation, run `npm install` and then run `npm start` which will open up a preview of the template in your default browser, watch for changes to core template files, and live reload the browser when changes are saved. You can view the `gulpfile.js` to see which tasks are included with the dev environment.
+Sdílené části webu (navigace, patička) jsou ve složce [`src/partials/`](https://github.com/dgcpraha/dgcpraha.github.io/tree/master/src/partials):
 
-#### Gulp Tasks
+| Soubor | Co obsahuje |
+|--------|-------------|
+| `src/partials/nav.html` | Navigační menu (zobrazuje se na všech stránkách) |
+| `src/partials/footer.html` | Patička se sociálními sítěmi a copyrightem |
+| `src/partials/head.html` | Hlavička stránky (CSS, fonty) |
+| `src/partials/scripts.html` | Importy JavaScriptu |
 
-- `gulp` the default task that builds everything
-- `gulp watch` browserSync opens the project in your default browser and live reloads when changes are made
-- `gulp css` compiles SCSS files into CSS and minifies the compiled CSS
-- `gulp js` minifies the themes JS file
-- `gulp vendor` copies dependencies from node_modules to the vendor directory
+### Jak provést úpravu
 
-You must have npm installed globally in order to use this build environment.
+1. Přihlaste se na [GitHub](https://github.com)
+2. Otevřete soubor, který chcete upravit (viz tabulky výše)
+3. Klikněte na ikonku tužky ("Edit this file") vpravo nahoře
+4. Proveďte úpravy v textu — měníte jen obsah mezi HTML tagy, např. text mezi `<p>` a `</p>`
+5. Dole v části "Commit changes" stručně popište, co jste změnili
+6. Zvolte "Create a new branch" a klikněte na "Propose changes"
+7. Na další stránce klikněte "Create pull request"
+8. Požádejte správce, aby změny zkontroloval, spustil build a schválil
 
-## Bugs and Issues
+### Důležité
 
-Have a bug or an issue with this template? [Open a new issue](https://github.com/BlackrockDigital/startbootstrap-agency/issues) here on GitHub or leave a comment on the [template overview page at Start Bootstrap](http://startbootstrap.com/template-overviews/agency/).
+- **Needitujte HTML soubory v kořenovém adresáři** (např. `index.html`, `krouzek.html`) — ty jsou generované a vaše změny by se při dalším buildu přepsaly. Vždy editujte soubory ve složce `src/`.
+- Pokud chcete změnit navigaci nebo patičku, stačí upravit příslušný soubor v `src/partials/` — změna se projeví na všech stránkách najednou.
 
-## About
+---
 
-Start Bootstrap is an open source library of free Bootstrap templates and themes. All of the free templates and themes on Start Bootstrap are released under the MIT license, which means you can use them for any purpose, even for commercial projects.
+## Lokální vývoj (pro vývojáře)
 
-* https://startbootstrap.com
-* https://twitter.com/SBootstrap
+### Požadavky
 
-Start Bootstrap was created by and is maintained by **[David Miller](http://davidmiller.io/)**, Owner of [Blackrock Digital](http://blackrockdigital.io/).
+- [Node.js](https://nodejs.org/) (viz `.nvmrc` pro doporučenou verzi)
+- npm (součást Node.js)
 
-* http://davidmiller.io
-* https://twitter.com/davidmillerskt
-* https://github.com/davidtmiller
+### Instalace
 
-Start Bootstrap is based on the [Bootstrap](http://getbootstrap.com/) framework created by [Mark Otto](https://twitter.com/mdo) and [Jacob Thorton](https://twitter.com/fat).
+```bash
+git clone https://github.com/dgcpraha/dgcpraha.github.io.git
+cd dgcpraha.github.io
+npm install
+```
 
-## Copyright and License
+### Vývoj s live reload
 
-Copyright 2013-2019 Blackrock Digital LLC. Code released under the [MIT](https://github.com/BlackrockDigital/startbootstrap-agency/blob/gh-pages/LICENSE) license.
+```bash
+npm start
+```
+
+Otevře se prohlížeč na `localhost:3000`. Při uložení jakéhokoli souboru v `src/`, `scss/` nebo `js/` se stránka automaticky obnoví.
+
+### Struktura projektu
+
+```
+├── src/                    # ZDROJOVÉ SOUBORY — editujte ZDE
+│   ├── pages/              # Obsah jednotlivých stránek
+│   │   ├── index.html
+│   │   ├── krouzek.html
+│   │   ├── nase_turnaje.html
+│   │   └── ...
+│   └── partials/           # Sdílené komponenty (navigace, patička, ...)
+├── scss/                   # Styly (SCSS)
+├── js/                     # JavaScript
+├── img/                    # Obrázky
+├── index.html              # Generované — needitovat!
+├── krouzek.html            # Generované — needitovat!
+└── ...
+```
+
+Web používá šablonovací systém [gulp-file-include](https://www.npmjs.com/package/gulp-file-include). Stránky v `src/pages/` obsahují pouze unikátní obsah a volání `@@include()` pro sdílené části. Gulp task `html` z nich vygeneruje finální HTML soubory v kořenovém adresáři.
+
+### Gulp tasky
+
+| Příkaz | Co dělá |
+|--------|---------|
+| `npx gulp` | Buildne vše (HTML + CSS + JS + vendor) |
+| `npx gulp html` | Zkompiluje HTML šablony ze `src/` |
+| `npx gulp css` | Zkompiluje SCSS do CSS a minifikuje |
+| `npx gulp js` | Minifikuje JavaScript |
+| `npx gulp watch` | BrowserSync s live reload |
+
+### Workflow pro změny
+
+1. Upravte soubory v `src/pages/` nebo `src/partials/`
+2. Spusťte `npx gulp html` (nebo `npx gulp` pro kompletní build)
+3. Commitněte jak zdrojové soubory (`src/`), tak vygenerované HTML
+4. Pushněte a vytvořte pull request
+
+## Licence
+
+[MIT](https://github.com/BlackrockDigital/startbootstrap-agency/blob/gh-pages/LICENSE)
