@@ -1,2 +1,15 @@
 node_modules
+dist
+vendor
+css
+js/*.min.js
 /report.20191109.235145.10624.0.001.json
+
+# Generated HTML files (built from src/ by gulp)
+/index.html
+/krouzek.html
+/nase_turnaje.html
+/instrukce_slevy.html
+/seznam_clenu.html
+/navrhni-dres.html
+/scitani/
