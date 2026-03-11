@@ -14,6 +14,9 @@ const sass = require("gulp-sass")(require("sass"));
 const uglify = require("gulp-uglify");
 const fileinclude = require("gulp-file-include");
 
+// Output directory
+const dist = "./dist";
+
 // Load package.json for banner
 const pkg = require('./package.json');
 
@@ -30,7 +33,7 @@ const banner = ['/*!\n',
 function browserSync(done) {
   browsersync.init({
     server: {
-      baseDir: "./"
+      baseDir: dist
     },
     port: 3000
   });
@@ -43,31 +46,31 @@ function browserSyncReload(done) {
   done();
 }
 
-// Clean vendor
+// Clean dist
 function clean() {
-  return del(["./vendor/"]);
+  return del([dist]);
 }
 
 // Bring third party dependencies from node_modules into vendor directory
 function modules() {
   // Bootstrap
   var bootstrap = gulp.src('./node_modules/bootstrap/dist/**/*')
-    .pipe(gulp.dest('./vendor/bootstrap'));
+    .pipe(gulp.dest(dist + '/vendor/bootstrap'));
   // Font Awesome CSS
   var fontAwesomeCSS = gulp.src('./node_modules/@fortawesome/fontawesome-free/css/**/*')
-    .pipe(gulp.dest('./vendor/fontawesome-free/css'));
+    .pipe(gulp.dest(dist + '/vendor/fontawesome-free/css'));
   // Font Awesome Webfonts
   var fontAwesomeWebfonts = gulp.src('./node_modules/@fortawesome/fontawesome-free/webfonts/**/*')
-    .pipe(gulp.dest('./vendor/fontawesome-free/webfonts'));
+    .pipe(gulp.dest(dist + '/vendor/fontawesome-free/webfonts'));
   // jQuery Easing
   var jqueryEasing = gulp.src('./node_modules/jquery.easing/*.js')
-    .pipe(gulp.dest('./vendor/jquery-easing'));
+    .pipe(gulp.dest(dist + '/vendor/jquery-easing'));
   // jQuery
   var jquery = gulp.src([
       './node_modules/jquery/dist/*',
       '!./node_modules/jquery/dist/core.js'
     ])
-    .pipe(gulp.dest('./vendor/jquery'));
+    .pipe(gulp.dest(dist + '/vendor/jquery'));
   return merge(bootstrap, fontAwesomeCSS, fontAwesomeWebfonts, jquery, jqueryEasing);
 }
 
@@ -87,12 +90,12 @@ function css() {
     .pipe(header(banner, {
       pkg: pkg
     }))
-    .pipe(gulp.dest("./css"))
+    .pipe(gulp.dest(dist + "/css"))
     .pipe(rename({
       suffix: ".min"
     }))
     .pipe(cleanCSS())
-    .pipe(gulp.dest("./css"))
+    .pipe(gulp.dest(dist + "/css"))
     .pipe(browsersync.stream());
 }
 
@@ -112,11 +115,11 @@ function js() {
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gulp.dest('./js'))
+    .pipe(gulp.dest(dist + '/js'))
     .pipe(browsersync.stream());
 }
 
-// HTML task - compile templates from src/pages to root
+// HTML task - compile templates from src/pages to dist
 function html() {
   return gulp
     .src(['./src/pages/**/*.html'])
@@ -124,7 +127,16 @@ function html() {
       prefix: '@@',
       basepath: './src/'
     }))
-    .pipe(gulp.dest('./'));
+    .pipe(gulp.dest(dist));
+}
+
+// Copy static assets to dist
+function assets() {
+  var images = gulp.src('./img/**/*')
+    .pipe(gulp.dest(dist + '/img'));
+  var cname = gulp.src('./CNAME')
+    .pipe(gulp.dest(dist));
+  return merge(images, cname);
 }
 
 // Watch files
@@ -132,17 +144,19 @@ function watchFiles() {
   gulp.watch("./scss/**/*", css);
   gulp.watch(["./js/**/*", "!./js/**/*.min.js"], js);
   gulp.watch("./src/**/*.html", gulp.series(html, browserSyncReload));
+  gulp.watch("./img/**/*", gulp.series(assets, browserSyncReload));
 }
 
 // Define complex tasks
 const vendor = gulp.series(clean, modules);
-const build = gulp.series(vendor, gulp.parallel(css, js, html));
+const build = gulp.series(vendor, gulp.parallel(css, js, html, assets));
 const watch = gulp.series(build, gulp.parallel(watchFiles, browserSync));
 
 // Export tasks
 exports.css = css;
 exports.js = js;
 exports.html = html;
+exports.assets = assets;
 exports.clean = clean;
 exports.vendor = vendor;
 exports.build = build;

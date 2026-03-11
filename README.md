@@ -39,11 +39,11 @@ Sdílené části webu (navigace, patička) jsou ve složce [`src/partials/`](ht
 5. Dole v části "Commit changes" stručně popište, co jste změnili
 6. Zvolte "Create a new branch" a klikněte na "Propose changes"
 7. Na další stránce klikněte "Create pull request"
-8. Požádejte správce, aby změny zkontroloval, spustil build a schválil
+8. Požádejte správce, aby změny zkontroloval a schválil — **web se automaticky nasadí po schválení**
 
 ### Důležité
 
-- **Needitujte HTML soubory v kořenovém adresáři** (např. `index.html`, `krouzek.html`) — ty jsou generované a vaše změny by se při dalším buildu přepsaly. Vždy editujte soubory ve složce `src/`.
+- **Editujte pouze soubory ve složce `src/`** — ostatní HTML, CSS a JS soubory jsou generované automaticky.
 - Pokud chcete změnit navigaci nebo patičku, stačí upravit příslušný soubor v `src/partials/` — změna se projeví na všech stránkách najednou.
 
 ---
@@ -69,7 +69,7 @@ npm install
 npm start
 ```
 
-Otevře se prohlížeč na `localhost:3000`. Při uložení jakéhokoli souboru v `src/`, `scss/` nebo `js/` se stránka automaticky obnoví.
+Otevře se prohlížeč na `localhost:3000` se stránkami z `dist/`. Při uložení jakéhokoli souboru v `src/`, `scss/` nebo `js/` se stránka automaticky obnoví.
 
 ### Struktura projektu
 
@@ -82,31 +82,35 @@ Otevře se prohlížeč na `localhost:3000`. Při uložení jakéhokoli souboru 
 │   │   └── ...
 │   └── partials/           # Sdílené komponenty (navigace, patička, ...)
 ├── scss/                   # Styly (SCSS)
-├── js/                     # JavaScript
+├── js/                     # JavaScript (zdrojové soubory)
 ├── img/                    # Obrázky
-├── index.html              # Generované — needitovat!
-├── krouzek.html            # Generované — needitovat!
-└── ...
+├── dist/                   # GENEROVANÝ výstup — needitovat! (v .gitignore)
+└── .github/workflows/      # GitHub Actions — automatický build a deploy
 ```
 
-Web používá šablonovací systém [gulp-file-include](https://www.npmjs.com/package/gulp-file-include). Stránky v `src/pages/` obsahují pouze unikátní obsah a volání `@@include()` pro sdílené části. Gulp task `html` z nich vygeneruje finální HTML soubory v kořenovém adresáři.
+### Jak to funguje
+
+Web používá šablonovací systém [gulp-file-include](https://www.npmjs.com/package/gulp-file-include). Stránky v `src/pages/` obsahují pouze unikátní obsah a volání `@@include()` pro sdílené části. Gulp task `build` vygeneruje kompletní web do složky `dist/`.
+
+**Nasazení je automatické** — po pushu do `master` se spustí GitHub Action, která web buildne a nasadí na GitHub Pages. Není potřeba commitovat `dist/`.
 
 ### Gulp tasky
 
 | Příkaz | Co dělá |
 |--------|---------|
-| `npx gulp` | Buildne vše (HTML + CSS + JS + vendor) |
-| `npx gulp html` | Zkompiluje HTML šablony ze `src/` |
-| `npx gulp css` | Zkompiluje SCSS do CSS a minifikuje |
-| `npx gulp js` | Minifikuje JavaScript |
-| `npx gulp watch` | BrowserSync s live reload |
+| `npx gulp` | Buildne vše do `dist/` (HTML + CSS + JS + vendor + assets) |
+| `npx gulp html` | Zkompiluje HTML šablony ze `src/` do `dist/` |
+| `npx gulp css` | Zkompiluje SCSS do CSS a minifikuje do `dist/css/` |
+| `npx gulp js` | Minifikuje JavaScript do `dist/js/` |
+| `npx gulp watch` | BrowserSync s live reload z `dist/` |
+| `npx gulp clean` | Smaže složku `dist/` |
 
 ### Workflow pro změny
 
-1. Upravte soubory v `src/pages/` nebo `src/partials/`
-2. Spusťte `npx gulp html` (nebo `npx gulp` pro kompletní build)
-3. Commitněte jak zdrojové soubory (`src/`), tak vygenerované HTML
-4. Pushněte a vytvořte pull request
+1. Upravte soubory v `src/pages/`, `src/partials/`, `scss/`, `js/` nebo `img/`
+2. Lokálně ověřte pomocí `npm start`
+3. Commitněte a pushněte (pouze zdrojové soubory — `dist/` je v `.gitignore`)
+4. GitHub Action automaticky buildne a nasadí web
 
 ## Licence
 
