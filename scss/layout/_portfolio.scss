@@ -1,8 +1,24 @@
 // Styling for the portfolio section
 #partneri {
+  // Make every column stretch and lay out its inner card vertically so the
+  // white caption blocks across a row end up the same height regardless of
+  // logo aspect ratio or whether a card has a CTA button.
+  .col-sm {
+    display: flex;
+  }
   .portfolio-item {
     right: 0;
     margin: 0 0 15px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    // Invisible spacer that occupies the same vertical space as a logo so
+    // the white caption block lines up with the rest of the row.
+    .portfolio-placeholder {
+      height: 120px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
     .portfolio-link {
       position: relative;
       display: flex;
@@ -16,6 +32,11 @@
         max-width: 100%;
         max-height: 100%;
         object-fit: contain;
+      }
+      // BigHub's wordmark is the densest in the row; trim its rendered size
+      // so it doesn't visually crowd the white caption below it.
+      img[src$="bighub_logo.svg"] {
+        max-height: 70%;
       }
       .portfolio-hover {
         position: absolute;
@@ -54,6 +75,12 @@
       padding: 25px;
       text-align: center;
       background-color: $white;
+      // Stretch caption to fill remaining column height so all white blocks
+      // in a row are the same height, and pin the CTA button to the bottom.
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
       h4 {
         margin: 0;
         text-transform: none;
@@ -63,6 +90,10 @@
         font-style: italic;
         margin: 0;
         @include serif-font;
+      }
+      .btn {
+        margin-top: auto;
+        align-self: center;
       }
     }
   }
