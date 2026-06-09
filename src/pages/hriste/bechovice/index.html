@@ -213,13 +213,39 @@
             padding: 2rem; text-align: center; color: var(--dgcp-muted); background: #fafbfe;
         }
         .ch-placeholder i { font-size: 1.8rem; color: var(--dgcp-blue); opacity: .55; margin-bottom: .6rem; }
-        .ch-videogrid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-        .ch-videotile {
-            aspect-ratio: 16/10; border-radius: 14px; background: var(--dgcp-blue-soft);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: var(--dgcp-blue); font-weight: 700; gap: .3rem; border: 1px solid var(--dgcp-line);
+        /* ---------- YouTube video facades (click-to-load) ---------- */
+        .ch-videogrid { display: grid; gap: 1.1rem; grid-template-columns: repeat(2, 1fr); }
+        .ch-video {
+            position: relative; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden;
+            background: #0a1730; border: 1px solid var(--dgcp-line); box-shadow: var(--dgcp-shadow);
         }
-        .ch-videotile span { font-size: .72rem; font-weight: 600; color: var(--dgcp-muted); }
+        .ch-video__btn { all: unset; position: absolute; inset: 0; display: block; cursor: pointer; }
+        .ch-video__thumb { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .35s ease; }
+        .ch-video__btn:hover .ch-video__thumb,
+        .ch-video__btn:focus-visible .ch-video__thumb { transform: scale(1.05); }
+        .ch-video__btn::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(180deg, rgba(0, 42, 107, .05) 0%, rgba(0, 42, 107, .15) 55%, rgba(0, 42, 107, .65) 100%);
+        }
+        .ch-video__btn:focus-visible { outline: 3px solid #fff; outline-offset: -3px; }
+        .ch-video__play {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2;
+            width: 62px; height: 62px; border-radius: 50%; padding-left: 4px;
+            background: rgba(255, 255, 255, .92); color: var(--dgcp-blue);
+            display: flex; align-items: center; justify-content: center; font-size: 1.35rem;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, .35); transition: transform .15s ease, background .15s ease;
+        }
+        .ch-video__btn:hover .ch-video__play,
+        .ch-video__btn:focus-visible .ch-video__play { transform: translate(-50%, -50%) scale(1.08); background: #fff; }
+        .ch-video__cap {
+            position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: .7rem .9rem;
+            color: #fff; font-weight: 700; font-size: .9rem; line-height: 1.25; text-align: left;
+            text-shadow: 0 1px 6px rgba(0, 0, 0, .5);
+        }
+        .ch-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+        .ch-videonote { text-align: center; color: var(--dgcp-muted); font-size: .9rem; margin-top: 1.6rem; }
+        .ch-videonote i { color: var(--dgcp-blue); margin-right: .35rem; }
+        @media (max-width: 575.98px) { .ch-videogrid { grid-template-columns: 1fr; } }
 
         /* ---------- Support highlight ---------- */
         .ch-support {
@@ -531,35 +557,48 @@
         </div>
     </section>
 
-    <!-- ===== Hole flyover videos (future) ===== -->
+    <!-- ===== Videos from the course (YouTube, click-to-load) ===== -->
     <section class="ch-section ch-section--tint" id="videa">
         <div class="container">
             <div class="ch-section__head">
-                <span class="ch-eyebrow"><span data-lang="cs">Připravujeme</span><span data-lang="en">Coming soon</span></span>
-                <h2 class="ch-h2"><span data-lang="cs">Přelety jamek</span><span data-lang="en">Hole flyovers</span></h2>
-                <p class="ch-sub"><span data-lang="cs">Pro každou jamku chystáme video s přeletem, ať víš, kam hrát. Brzy tady.</span><span data-lang="en">We're preparing a flyover video for each hole so you know where to aim. Coming soon.</span></p>
+                <span class="ch-eyebrow"><span data-lang="cs">Videa</span><span data-lang="en">Video</span></span>
+                <h2 class="ch-h2"><span data-lang="cs">Videa z hřiště</span><span data-lang="en">Videos from the course</span></h2>
+                <p class="ch-sub"><span data-lang="cs">Záběry z turnajů hraných na našem hřišti v Běchovicích.</span><span data-lang="en">Footage from tournaments played on our course in Běchovice.</span></p>
             </div>
             <div class="ch-videogrid">
-                <!-- 18 placeholder tiles -->
-                <div class="ch-videotile"><i class="fas fa-play-circle"></i>1 <span>video brzy</span></div>
-                <div class="ch-videotile"><i class="fas fa-play-circle"></i>2 <span>video brzy</span></div>
-                <div class="ch-videotile"><i class="fas fa-play-circle"></i>3 <span>video brzy</span></div>
-                <div class="ch-videotile"><i class="fas fa-play-circle"></i>4 <span>video brzy</span></div>
-                <div class="ch-videotile"><i class="fas fa-play-circle"></i>5 <span>video brzy</span></div>
-                <div class="ch-videotile"><i class="fas fa-play-circle"></i>6 <span>video brzy</span></div>
-                <div class="ch-videotile"><i class="fas fa-play-circle"></i>7 <span>video brzy</span></div>
-                <div class="ch-videotile"><i class="fas fa-play-circle"></i>8 <span>video brzy</span></div>
-                <div class="ch-videotile"><i class="fas fa-play-circle"></i>9 <span>video brzy</span></div>
-                <div class="ch-videotile"><i class="fas fa-play-circle"></i>10 <span>video brzy</span></div>
-                <div class="ch-videotile"><i class="fas fa-play-circle"></i>11 <span>video brzy</span></div>
-                <div class="ch-videotile"><i class="fas fa-play-circle"></i>12 <span>video brzy</span></div>
-                <div class="ch-videotile"><i class="fas fa-play-circle"></i>13 <span>video brzy</span></div>
-                <div class="ch-videotile"><i class="fas fa-play-circle"></i>14 <span>video brzy</span></div>
-                <div class="ch-videotile"><i class="fas fa-play-circle"></i>15 <span>video brzy</span></div>
-                <div class="ch-videotile"><i class="fas fa-play-circle"></i>16 <span>video brzy</span></div>
-                <div class="ch-videotile"><i class="fas fa-play-circle"></i>17 <span>video brzy</span></div>
-                <div class="ch-videotile"><i class="fas fa-play-circle"></i>18 <span>video brzy</span></div>
+                <div class="ch-video">
+                    <button type="button" class="ch-video__btn" data-ytid="VA1BJwAbDhw" aria-label="Přehrát video: Běchovický Trn 2025 – MPO 3. kolo, první devítka">
+                        <img class="ch-video__thumb" src="https://i.ytimg.com/vi/VA1BJwAbDhw/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
+                        <span class="ch-video__play"><i class="fas fa-play"></i></span>
+                        <span class="ch-video__cap"><span data-lang="cs">Běchovický Trn 2025 — MPO 3. kolo, první devítka</span><span data-lang="en">Běchovický Trn 2025 — round 3 (MPO), front nine</span></span>
+                    </button>
+                </div>
+                <div class="ch-video">
+                    <button type="button" class="ch-video__btn" data-ytid="uKhSPUuDEjk" aria-label="Přehrát video: Běchovický Trn 2025 – MPO 3. kolo, druhá devítka">
+                        <img class="ch-video__thumb" src="https://i.ytimg.com/vi/uKhSPUuDEjk/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
+                        <span class="ch-video__play"><i class="fas fa-play"></i></span>
+                        <span class="ch-video__cap"><span data-lang="cs">Běchovický Trn 2025 — MPO 3. kolo, druhá devítka</span><span data-lang="en">Běchovický Trn 2025 — round 3 (MPO), back nine</span></span>
+                    </button>
+                </div>
+                <div class="ch-video">
+                    <button type="button" class="ch-video__btn" data-ytid="OhZWbSxrjzg" aria-label="Přehrát video: Běchovický Trn 2024 – finálové kolo, první devítka">
+                        <img class="ch-video__thumb" src="https://i.ytimg.com/vi/OhZWbSxrjzg/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
+                        <span class="ch-video__play"><i class="fas fa-play"></i></span>
+                        <span class="ch-video__cap"><span data-lang="cs">Běchovický Trn 2024 — finálové kolo, první devítka</span><span data-lang="en">Běchovický Trn 2024 — final round, front nine</span></span>
+                    </button>
+                </div>
+                <div class="ch-video">
+                    <button type="button" class="ch-video__btn" data-ytid="TsEAlkUw0fs" aria-label="Přehrát video: Běchovický Trn 2024 – finálové kolo, druhá devítka">
+                        <img class="ch-video__thumb" src="https://i.ytimg.com/vi/TsEAlkUw0fs/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
+                        <span class="ch-video__play"><i class="fas fa-play"></i></span>
+                        <span class="ch-video__cap"><span data-lang="cs">Běchovický Trn 2024 — finálové kolo, druhá devítka</span><span data-lang="en">Běchovický Trn 2024 — final round, back nine</span></span>
+                    </button>
+                </div>
             </div>
+            <p class="ch-videonote">
+                <i class="fas fa-helicopter"></i>
+                <span data-lang="cs">Přelety jednotlivých jamek připravujeme — brzy tady.</span><span data-lang="en">Hole-by-hole flyovers are coming soon.</span>
+            </p>
         </div>
     </section>
 
@@ -605,6 +644,24 @@
             syncButtons(root.classList.contains('lang-en') ? 'en' : 'cs');
             buttons.forEach(function (b) {
                 b.addEventListener('click', function () { setLang(b.getAttribute('data-setlang')); });
+            });
+        })();
+
+        // Click-to-load YouTube facades — load the iframe only when the user clicks play.
+        (function () {
+            document.querySelectorAll('.ch-video__btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var id = btn.getAttribute('data-ytid');
+                    if (!id) return;
+                    var iframe = document.createElement('iframe');
+                    iframe.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0';
+                    iframe.title = btn.getAttribute('aria-label') || 'YouTube video';
+                    iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+                    iframe.allowFullscreen = true;
+                    var cell = btn.closest('.ch-video');
+                    cell.innerHTML = '';
+                    cell.appendChild(iframe);
+                });
             });
         })();
     </script>
