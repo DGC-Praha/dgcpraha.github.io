@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="cs" class="lang-cs">
+
+<head>
+    <!-- Pick language before paint (CZ default, no-JS safe) to avoid a language flash -->
+    <script>
+        (function () {
+            var l;
+            try { l = localStorage.getItem('dgcp-lang'); } catch (e) {}
+            if (!l) { l = (navigator.language || '').toLowerCase().indexOf('cs') === 0 ? 'cs' : 'en'; }
+            l = (l === 'en') ? 'en' : 'cs';
+            var r = document.documentElement;
+            r.classList.remove('lang-cs', 'lang-en');
+            r.classList.add('lang-' + l);
+            r.lang = l;
+        })();
+    </script>
+
+@@include('partials/head.html', {"title": "DiscGolfPark Běchovice – DGC Praha", "basePath": "../.."})
+
+    <meta name="description" content="DiscGolfPark Běchovice – vše, co potřebuješ vědět před hrou: jak skórovat, pravidla pro nováčky, podpora hřiště a turnaje. / Everything you need before you play in Běchovice.">
+
+    <style>
+        /* ========== Course hub – scoped styles ========== */
+        :root {
+            --dgcp-blue: #003d99;
+            --dgcp-blue-dark: #002a6b;
+            --dgcp-blue-soft: #eaf0fb;
+            --dgcp-fairway: #2f8f4e;
+            --dgcp-ink: #1c2430;
+            --dgcp-muted: #5a6473;
+            --dgcp-line: #e6e9f0;
+            --dgcp-radius: 18px;
+            --dgcp-shadow: 0 10px 30px rgba(0, 61, 153, .08);
+            --dgcp-shadow-lg: 0 18px 50px rgba(0, 61, 153, .14);
+        }
+
+        .ch-body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--dgcp-ink);
+            background: #fff;
+            overflow-x: hidden;
+        }
+
+        /* show only the active language (lang-* class lives on <html>) */
+        [data-lang] { display: none; }
+        .lang-cs [data-lang="cs"],
+        .lang-en [data-lang="en"] { display: inline; }
+
+        /* ---------- Top bar ---------- */
+        .ch-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+            background: var(--dgcp-blue);
+            box-shadow: 0 2px 18px rgba(0, 0, 0, .18);
+        }
+        .ch-topbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .ch-topbar__brand { display: flex; align-items: center; gap: .65rem; }
+        .ch-topbar__brand img { height: 34px; width: auto; }
+        .ch-topbar__brand span {
+            color: #fff; font-weight: 700; font-size: .78rem;
+            letter-spacing: .04em; text-transform: uppercase; opacity: .9;
+        }
+        .ch-langtoggle {
+            display: inline-flex;
+            border: 1px solid rgba(255, 255, 255, .35);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        .ch-langtoggle button {
+            background: transparent; border: 0; color: rgba(255, 255, 255, .75);
+            font-weight: 700; font-size: .72rem; letter-spacing: .06em;
+            padding: .32rem .72rem; cursor: pointer; transition: all .15s ease;
+        }
+        .ch-langtoggle button.is-active { background: #fff; color: var(--dgcp-blue); }
+
+        /* ---------- Hero ---------- */
+        .ch-hero {
+            position: relative;
+            min-height: 78vh;
+            display: flex;
+            align-items: flex-end;
+            color: #fff;
+            background:
+                linear-gradient(180deg, rgba(0, 42, 107, .15) 0%, rgba(0, 42, 107, .55) 55%, rgba(0, 42, 107, .92) 100%),
+                radial-gradient(120% 80% at 70% 0%, #2a63c4 0%, var(--dgcp-blue) 45%, var(--dgcp-blue-dark) 100%);
+            background-size: cover;
+            background-position: center;
+        }
+        /* Course photo: drop a file into img/ and uncomment the URL in --ch-hero-photo below */
+        .ch-hero.has-photo {
+            background:
+                linear-gradient(180deg, rgba(0, 42, 107, .15) 0%, rgba(0, 42, 107, .55) 55%, rgba(0, 42, 107, .92) 100%),
+                var(--ch-hero-photo) center/cover no-repeat;
+        }
+        .ch-hero__inner { padding: 3rem 0 3.2rem; width: 100%; }
+        .ch-hero__eyebrow {
+            text-transform: uppercase; letter-spacing: .18em; font-size: .8rem;
+            font-weight: 700; opacity: .85; margin-bottom: .6rem;
+        }
+        .ch-hero__title {
+            font-size: clamp(2.4rem, 7vw, 4.2rem);
+            font-weight: 700; line-height: 1.02; margin: 0 0 .8rem;
+            text-shadow: 0 2px 24px rgba(0, 0, 0, .25);
+        }
+        .ch-hero__lead { font-size: clamp(1rem, 2.6vw, 1.25rem); max-width: 38ch; opacity: .95; }
+        .ch-chips { display: flex; flex-wrap: wrap; gap: .55rem; margin: 1.4rem 0 1.6rem; }
+        .ch-chip {
+            display: inline-flex; align-items: center; gap: .45rem;
+            background: rgba(255, 255, 255, .14); backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, .25);
+            padding: .45rem .85rem; border-radius: 999px;
+            font-size: .85rem; font-weight: 600;
+        }
+        .ch-hero__cta { display: flex; flex-wrap: wrap; gap: .7rem; }
+
+        /* ---------- Buttons ---------- */
+        .ch-btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+            font-weight: 700; font-size: .92rem; letter-spacing: .02em;
+            padding: .8rem 1.4rem; border-radius: 999px; border: 2px solid transparent;
+            cursor: pointer; text-decoration: none; transition: transform .12s ease, box-shadow .12s ease, background .15s ease;
+        }
+        .ch-btn:hover { transform: translateY(-2px); text-decoration: none; }
+        .ch-btn--primary { background: #fff; color: var(--dgcp-blue); }
+        .ch-btn--primary:hover { color: var(--dgcp-blue-dark); box-shadow: var(--dgcp-shadow-lg); }
+        .ch-btn--ghost { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .6); }
+        .ch-btn--ghost:hover { background: rgba(255, 255, 255, .12); color: #fff; }
+        .ch-btn--blue { background: var(--dgcp-blue); color: #fff; }
+        .ch-btn--blue:hover { background: var(--dgcp-blue-dark); color: #fff; box-shadow: var(--dgcp-shadow); }
+        .ch-btn--outline { background: transparent; color: var(--dgcp-blue); border-color: var(--dgcp-blue); }
+        .ch-btn--outline:hover { background: var(--dgcp-blue); color: #fff; }
+        .ch-btn--block { width: 100%; }
+
+        /* ---------- Sections ---------- */
+        .ch-section { padding: clamp(3rem, 7vw, 5.5rem) 0; }
+        .ch-section--tint { background: var(--dgcp-blue-soft); }
+        .ch-section__head { text-align: center; max-width: 46rem; margin: 0 auto 2.6rem; }
+        .ch-eyebrow {
+            display: inline-block; text-transform: uppercase; letter-spacing: .16em;
+            font-size: .78rem; font-weight: 700; color: var(--dgcp-blue);
+            background: var(--dgcp-blue-soft); padding: .3rem .8rem; border-radius: 999px; margin-bottom: .9rem;
+        }
+        .ch-section--tint .ch-eyebrow { background: #fff; }
+        .ch-h2 { font-size: clamp(1.7rem, 4.5vw, 2.4rem); font-weight: 700; margin: 0 0 .6rem; }
+        .ch-sub { color: var(--dgcp-muted); font-size: 1.02rem; margin: 0; }
+
+        /* ---------- Cards ---------- */
+        .ch-card {
+            background: #fff; border: 1px solid var(--dgcp-line);
+            border-radius: var(--dgcp-radius); box-shadow: var(--dgcp-shadow);
+            padding: 1.6rem; height: 100%;
+            display: flex; flex-direction: column;
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+        .ch-card:hover { transform: translateY(-4px); box-shadow: var(--dgcp-shadow-lg); }
+        .ch-card__icon {
+            width: 54px; height: 54px; border-radius: 14px;
+            display: inline-flex; align-items: center; justify-content: center;
+            background: var(--dgcp-blue-soft); color: var(--dgcp-blue);
+            font-size: 1.35rem; margin-bottom: 1rem;
+        }
+        .ch-card h3 { font-size: 1.18rem; font-weight: 700; margin: 0 0 .55rem; }
+        .ch-card p { color: var(--dgcp-muted); font-size: .96rem; margin: 0 0 1rem; }
+        .ch-card .ch-card__foot { margin-top: auto; }
+
+        /* ---------- QR cards ---------- */
+        .ch-qrcard { text-align: center; align-items: center; }
+        .ch-qr {
+            width: 168px; height: 168px; padding: 12px;
+            background: #fff; border: 1px solid var(--dgcp-line); border-radius: 14px;
+            box-shadow: inset 0 0 0 6px #fff, 0 6px 18px rgba(0, 61, 153, .07);
+            margin: 0 auto 1rem;
+        }
+        .ch-qr img, .ch-qr svg { width: 100%; height: 100%; display: block; }
+        .ch-qr--todo {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: .4rem; border: 2px dashed var(--dgcp-blue); color: var(--dgcp-blue);
+            background: var(--dgcp-blue-soft); box-shadow: none; font-size: .8rem; font-weight: 700; text-align: center;
+        }
+        .ch-qr--todo i { font-size: 1.8rem; }
+        .ch-qrhint { font-size: .8rem; color: var(--dgcp-muted); margin-top: .5rem; }
+
+        /* ---------- Steps (how to score / first time) ---------- */
+        .ch-steps { counter-reset: step; display: grid; gap: 1rem; }
+        .ch-step {
+            display: flex; gap: 1rem; align-items: flex-start;
+            background: #fff; border: 1px solid var(--dgcp-line); border-radius: 14px; padding: 1.1rem 1.2rem;
+        }
+        .ch-step::before {
+            counter-increment: step; content: counter(step);
+            flex: 0 0 auto; width: 38px; height: 38px; border-radius: 50%;
+            background: var(--dgcp-blue); color: #fff; font-weight: 700;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+        .ch-step h4 { font-size: 1.02rem; font-weight: 700; margin: .1rem 0 .25rem; }
+        .ch-step p { color: var(--dgcp-muted); font-size: .92rem; margin: 0; }
+
+        /* ---------- Info list (etiquette / disc rules) ---------- */
+        .ch-list { list-style: none; padding: 0; margin: 0; display: grid; gap: .85rem; }
+        .ch-list li { display: flex; gap: .8rem; align-items: flex-start; font-size: .98rem; }
+        .ch-list li i { color: var(--dgcp-fairway); margin-top: .2rem; flex: 0 0 auto; }
+
+        /* ---------- Placeholder blocks (tournaments / videos / partners) ---------- */
+        .ch-placeholder {
+            border: 2px dashed var(--dgcp-line); border-radius: var(--dgcp-radius);
+            padding: 2rem; text-align: center; color: var(--dgcp-muted); background: #fafbfe;
+        }
+        .ch-placeholder i { font-size: 1.8rem; color: var(--dgcp-blue); opacity: .55; margin-bottom: .6rem; }
+        .ch-videogrid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+        .ch-videotile {
+            aspect-ratio: 16/10; border-radius: 14px; background: var(--dgcp-blue-soft);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--dgcp-blue); font-weight: 700; gap: .3rem; border: 1px solid var(--dgcp-line);
+        }
+        .ch-videotile span { font-size: .72rem; font-weight: 600; color: var(--dgcp-muted); }
+
+        /* ---------- Support highlight ---------- */
+        .ch-support {
+            background: linear-gradient(135deg, var(--dgcp-blue) 0%, var(--dgcp-blue-dark) 100%);
+            color: #fff; border-radius: var(--dgcp-radius); box-shadow: var(--dgcp-shadow-lg);
+            padding: clamp(1.6rem, 4vw, 2.6rem);
+        }
+        .ch-support h3 { color: #fff; }
+        .ch-support p { color: rgba(255, 255, 255, .88); }
+        .ch-support .ch-qr { background: #fff; }
+
+        .ch-tablink { color: var(--dgcp-blue); font-weight: 700; text-decoration: none; }
+        .ch-tablink:hover { text-decoration: underline; }
+
+        @media (max-width: 575.98px) {
+            .ch-hero { min-height: 70vh; }
+            .ch-hero__cta .ch-btn { width: 100%; }
+        }
+    </style>
+</head>
+
+<body id="page-top" class="ch-body">
+
+    <!-- ===== Top bar ===== -->
+    <div class="ch-topbar">
+        <div class="container">
+            <a class="ch-topbar__brand" href="../../index.html">
+                <img src="../../img/logo/dgcp-logo-final-white.png" alt="DGC Praha">
+                <span lang="cs">DiscGolfPark Běchovice</span>
+            </a>
+            <div class="ch-langtoggle" role="group" aria-label="Language / Jazyk">
+                <button type="button" data-setlang="cs" class="is-active" aria-label="Česky">CZ</button>
+                <button type="button" data-setlang="en" aria-label="English">EN</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Hero ===== -->
+    <header class="ch-hero" id="hero">
+        <div class="container">
+            <div class="ch-hero__inner">
+                <div class="ch-hero__eyebrow">
+                    <span data-lang="cs">Disc Golf Club Praha · Hřiště</span>
+                    <span data-lang="en">Disc Golf Club Praha · Course</span>
+                </div>
+                <h1 class="ch-hero__title">DiscGolfPark<br>Běchovice</h1>
+                <p class="ch-hero__lead">
+                    <span data-lang="cs">Vítej na našem domácím hřišti. Tady najdeš všechno, co potřebuješ vědět před hrou — ať hraješ poprvé, nebo se sem jen občas vracíš.</span>
+                    <span data-lang="en">Welcome to our home course. Here's everything you need before you play — whether it's your first round or an occasional visit.</span>
+                </p>
+                <div class="ch-chips">
+                    <span class="ch-chip"><i class="fas fa-flag"></i> 18 <span data-lang="cs">jamek</span><span data-lang="en">holes</span></span>
+                    <span class="ch-chip"><i class="fas fa-coins"></i> <span data-lang="cs">Hraní zdarma</span><span data-lang="en">Free to play</span></span>
+                    <span class="ch-chip"><i class="fas fa-clock"></i> 2–3,5 <span data-lang="cs">hod.</span><span data-lang="en">hrs</span></span>
+                    <span class="ch-chip"><i class="fas fa-trophy"></i> <span data-lang="cs">Dějiště MČR 2023</span><span data-lang="en">2023 Nat'l Champs venue</span></span>
+                </div>
+                <div class="ch-hero__cta">
+                    <a class="ch-btn ch-btn--primary" href="https://www.google.com/maps/search/?api=1&query=50.083904,14.615783" target="_blank" rel="noopener">
+                        <i class="fas fa-location-arrow"></i>
+                        <span data-lang="cs">Naviguj na hřiště</span><span data-lang="en">Navigate here</span>
+                    </a>
+                    <a class="ch-btn ch-btn--ghost" href="#scoring">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span data-lang="cs">Jak skórovat</span><span data-lang="en">How to score</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== Welcome / Club + signup ===== -->
+    <section class="ch-section" id="klub">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-7 mb-4 mb-lg-0">
+                    <span class="ch-eyebrow"><span data-lang="cs">O klubu</span><span data-lang="en">About the club</span></span>
+                    <h2 class="ch-h2"><span data-lang="cs">Disc Golf Club Praha</span><span data-lang="en">Disc Golf Club Praha</span></h2>
+                    <p class="ch-sub mb-3">
+                        <span data-lang="cs">DGC Praha sdružuje hráče discgolfu z Prahy a okolí za účelem propagace a rozvoje tohoto sportu. Pořádáme pravidelné tréninky — od jara do podzimu právě tady v Běchovicích, přes zimu v hale v Hloubětíně. Ukážeme základy, pomůžeme s technikou a poradíme s výběrem disků.</span>
+                        <span data-lang="en">DGC Praha brings together disc golf players from Prague and the surrounding area to promote and grow the sport. We run regular practices — spring to autumn right here in Běchovice, and indoors in Hloubětín over winter. We'll show you the basics, help with technique, and advise on disc selection.</span>
+                    </p>
+                    <p class="ch-sub mb-4">
+                        <span data-lang="cs">Líbí se ti to tu? Přidej se k nám — staň se členem klubu a hraj s partou nadšenců.</span>
+                        <span data-lang="en">Enjoying it here? Join us — become a club member and play with a crew of enthusiasts.</span>
+                    </p>
+                    <a class="ch-btn ch-btn--blue" href="../../index.html">
+                        <i class="fas fa-globe"></i> <span data-lang="cs">Web klubu</span><span data-lang="en">Club website</span>
+                    </a>
+                </div>
+                <div class="col-lg-5">
+                    <div class="ch-card ch-qrcard">
+                        <div class="ch-card__icon"><i class="fas fa-user-plus"></i></div>
+                        <h3><span data-lang="cs">Přihláška do klubu</span><span data-lang="en">Join the club</span></h3>
+                        <p><span data-lang="cs">Naskenuj a vyplň přihlášku — staň se členem DGC Praha.</span><span data-lang="en">Scan and fill out the form to become a DGC Praha member.</span></p>
+                        <!-- NOTE: default target = members.dgcp.cz. Confirm/replace signup URL & regenerate QR. -->
+                        <div class="ch-qr"><img src="../../img/qr/bechovice/signup.svg" alt="QR – přihláška"></div>
+                        <div class="ch-card__foot">
+                            <a class="ch-btn ch-btn--outline ch-btn--block" href="https://members.dgcp.cz" target="_blank" rel="noopener">
+                                <span data-lang="cs">Otevřít přihlášku</span><span data-lang="en">Open the form</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Scoring (UDisc / Stockshot) ===== -->
+    <section class="ch-section ch-section--tint" id="scoring">
+        <div class="container">
+            <div class="ch-section__head">
+                <span class="ch-eyebrow"><span data-lang="cs">Skórování</span><span data-lang="en">Scoring</span></span>
+                <h2 class="ch-h2"><span data-lang="cs">Zapisuj si skóre v appce</span><span data-lang="en">Track your score in an app</span></h2>
+                <p class="ch-sub"><span data-lang="cs">Hřiště je nahrané v obou appkách — vyber si a spusť kolo přímo z mobilu.</span><span data-lang="en">The course is loaded in both apps — pick one and start a round from your phone.</span></p>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="ch-card ch-qrcard">
+                        <div class="ch-card__icon"><i class="fas fa-mobile-alt"></i></div>
+                        <h3>UDisc</h3>
+                        <p><span data-lang="cs">Nejpoužívanější discgolfová appka. Naskenuj a spusť kolo na DiscGolfPark Běchovice.</span><span data-lang="en">The most popular disc golf app. Scan to open and start a round at DiscGolfPark Běchovice.</span></p>
+                        <div class="ch-qr"><img src="../../img/qr/bechovice/udisc.svg" alt="QR – UDisc Běchovice"></div>
+                        <div class="ch-card__foot">
+                            <a class="ch-btn ch-btn--outline ch-btn--block" href="https://udisc.com/courses/disc-golf-park-bechovice-h30U" target="_blank" rel="noopener">
+                                <span data-lang="cs">Otevřít v UDisc</span><span data-lang="en">Open in UDisc</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="ch-card ch-qrcard">
+                        <div class="ch-card__icon"><i class="fas fa-bullseye"></i></div>
+                        <h3>Stockshot</h3>
+                        <p><span data-lang="cs">Česká discgolfová appka. Naskenuj a zapisuj si skóre na našem hřišti.</span><span data-lang="en">Czech disc golf app. Scan to keep score on our course.</span></p>
+                        <!-- TODO: provide Stockshot course URL, then: qrencode -t SVG -l Q -m 2 --foreground=003d99 -o img/qr/bechovice/stockshot.svg "<URL>" -->
+                        <div class="ch-qr ch-qr--todo">
+                            <i class="fas fa-qrcode"></i>
+                            <span data-lang="cs">QR doplníme<br>(čekáme na odkaz)</span><span data-lang="en">QR coming<br>(awaiting link)</span>
+                        </div>
+                        <div class="ch-card__foot">
+                            <!-- TODO: once you have the Stockshot URL, replace this with <a class="ch-btn ch-btn--outline ch-btn--block" href="..." target="_blank" rel="noopener"> -->
+                            <button type="button" class="ch-btn ch-btn--outline ch-btn--block" style="opacity:.5;" disabled>
+                                <span data-lang="cs">Brzy ve Stockshot</span><span data-lang="en">Stockshot coming soon</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-lg-10 offset-lg-1">
+                    <h3 class="text-center mb-4" style="font-weight:700;">
+                        <span data-lang="cs">Skóruješ poprvé? Ve třech krocích:</span><span data-lang="en">Scoring for the first time? In three steps:</span>
+                    </h3>
+                    <div class="ch-steps">
+                        <div class="ch-step">
+                            <div>
+                                <h4><span data-lang="cs">Najdi hřiště a spusť kolo</span><span data-lang="en">Find the course & start a round</span></h4>
+                                <p><span data-lang="cs">V appce vyber „DiscGolfPark Běchovice" a u první jamky klepni na Spustit kolo.</span><span data-lang="en">Pick "DiscGolfPark Běchovice" in the app and tap Start round at hole 1.</span></p>
+                            </div>
+                        </div>
+                        <div class="ch-step">
+                            <div>
+                                <h4><span data-lang="cs">Zapiš hody po každé jamce</span><span data-lang="en">Log throws after each hole</span></h4>
+                                <p><span data-lang="cs">Po dohrání jamky zadej počet hodů (každý hod = 1 bod). Tlačítkem + přidáš hráče.</span><span data-lang="en">After finishing a hole, enter your number of throws (each throw = 1 stroke). Use + to add players.</span></p>
+                            </div>
+                        </div>
+                        <div class="ch-step">
+                            <div>
+                                <h4><span data-lang="cs">Cíl: co nejméně hodů</span><span data-lang="en">Goal: fewest throws</span></h4>
+                                <p><span data-lang="cs">Vyhrává nejnižší součet za všech 18 jamek. Appka skóre sečte za tebe.</span><span data-lang="en">The lowest total across all 18 holes wins. The app adds it up for you.</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== First time here ===== -->
+    <section class="ch-section" id="prvni-navsteva">
+        <div class="container">
+            <div class="row align-items-start">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <span class="ch-eyebrow"><span data-lang="cs">Poprvé na hřišti</span><span data-lang="en">First time here</span></span>
+                    <h2 class="ch-h2"><span data-lang="cs">Jak to tu funguje</span><span data-lang="en">How it works</span></h2>
+                    <p class="ch-sub mb-4"><span data-lang="cs">Discgolf je jednoduchý: hodíš disk od výhoziště (tee) a snažíš se na co nejméně hodů trefit koš. Pár věcí, které se hodí vědět:</span><span data-lang="en">Disc golf is simple: throw your disc from the tee and try to hit the basket in as few throws as possible. A few things worth knowing:</span></p>
+                    <ul class="ch-list">
+                        <li><i class="fas fa-flag-checkered"></i><span><strong data-lang="cs">Start u jamky 1.</strong><strong data-lang="en">Start at hole 1.</strong> <span data-lang="cs">Jamky hraj popořadě podle čísel na cedulích u výhozišť.</span><span data-lang="en">Play holes in order, following the numbers on the tee signs.</span></span></li>
+                        <li><i class="fas fa-walking"></i><span><strong data-lang="cs">Hraj odtud, kde disk dopadl.</strong><strong data-lang="en">Play from where the disc lands.</strong> <span data-lang="cs">Další hod provádíš z místa posledního dopadu (lie).</span><span data-lang="en">Your next throw is from where it last landed (the lie).</span></span></li>
+                        <li><i class="fas fa-user-friends"></i><span><strong data-lang="cs">Bezpečnost první.</strong><strong data-lang="en">Safety first.</strong> <span data-lang="cs">Nikdy neházej, pokud je někdo v dosahu nebo před tebou.</span><span data-lang="en">Never throw if someone is within range or ahead of you.</span></span></li>
+                        <li><i class="fas fa-leaf"></i><span><strong data-lang="cs">Respektuj okolí.</strong><strong data-lang="en">Respect the surroundings.</strong> <span data-lang="cs">Neodhazuj odpadky, chovej se ohleduplně k přírodě i kolemjdoucím.</span><span data-lang="en">No littering; be considerate of nature and passers-by.</span></span></li>
+                        <li><i class="fas fa-hand-paper"></i><span><strong data-lang="cs">Pusť rychlejší skupinu.</strong><strong data-lang="en">Let faster groups play through.</strong> <span data-lang="cs">Když vás dohání rychlejší flight, nech je projít.</span><span data-lang="en">If a faster group catches up, wave them through.</span></span></li>
+                    </ul>
+                </div>
+                <div class="col-lg-6">
+                    <div class="ch-card">
+                        <div class="ch-card__icon"><i class="fas fa-question"></i></div>
+                        <h3><span data-lang="cs">Nemáš disk?</span><span data-lang="en">No disc?</span></h3>
+                        <p><span data-lang="cs">Pro start ti stačí jediný univerzální disk (midrange). Půjčit nebo koupit disky můžeš u našich partnerů, nebo dorazit na klubový trénink, kde ti rádi nějaký půjčíme a poradíme.</span><span data-lang="en">A single all-round disc (a midrange) is enough to start. You can buy or borrow discs from our partners, or come to a club practice where we'll happily lend you one and give tips.</span></p>
+                        <div class="ch-card__foot">
+                            <a class="ch-btn ch-btn--outline" href="../../index.html#treninky">
+                                <i class="fas fa-calendar"></i> <span data-lang="cs">Klubové tréninky</span><span data-lang="en">Club practices</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Disc marking & return ===== -->
+    <section class="ch-section ch-section--tint" id="disky">
+        <div class="container">
+            <div class="ch-section__head">
+                <span class="ch-eyebrow"><span data-lang="cs">Disky</span><span data-lang="en">Discs</span></span>
+                <h2 class="ch-h2"><span data-lang="cs">Označuj a vracej disky</span><span data-lang="en">Mark & return discs</span></h2>
+                <p class="ch-sub"><span data-lang="cs">Disky se občas ztratí — ale skoro vždycky se najdou. Pomoz tomu i ty.</span><span data-lang="en">Discs get lost sometimes — but almost always turn up. Help make that happen.</span></p>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="ch-card">
+                        <div class="ch-card__icon"><i class="fas fa-pen"></i></div>
+                        <h3><span data-lang="cs">Označ si svoje disky</span><span data-lang="en">Mark your discs</span></h3>
+                        <p><span data-lang="cs">Napiš si na zadní stranu disku jméno a telefon (lihovou fixou). Označený disk se k tobě skoro vždy vrátí — nálezci tě snadno kontaktují.</span><span data-lang="en">Write your name and phone number on the back of each disc (permanent marker). A marked disc almost always finds its way home — finders can easily reach you.</span></p>
+                        <ul class="ch-list">
+                            <li><i class="fas fa-check"></i><span data-lang="cs">Jméno + telefon, čitelně a nesmazatelně.</span><span data-lang="en">Name + phone, legible and permanent.</span></li>
+                            <li><i class="fas fa-check"></i><span data-lang="cs">Klidně i e-mail nebo „odměna".</span><span data-lang="en">Email or a small "reward" note also helps.</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="ch-card">
+                        <div class="ch-card__icon"><i class="fas fa-undo"></i></div>
+                        <h3><span data-lang="cs">Našel jsi cizí disk?</span><span data-lang="en">Found someone's disc?</span></h3>
+                        <p><span data-lang="cs">Díky! Když je disk označený, kontaktuj majitele podle údajů na disku. Pokud označený není, napiš do běchovické FB skupiny — majitel se většinou ozve.</span><span data-lang="en">Thanks! If the disc is marked, contact the owner using the details on it. If it isn't, post in the Běchovice FB group — the owner usually shows up.</span></p>
+                        <div class="ch-card__foot">
+                            <a class="ch-btn ch-btn--outline" href="https://www.facebook.com/groups/790034088925945" target="_blank" rel="noopener">
+                                <i class="fab fa-facebook"></i> <span data-lang="cs">FB skupina hřiště</span><span data-lang="en">Course FB group</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Support the course (donation QR) ===== -->
+    <section class="ch-section" id="podpora">
+        <div class="container">
+            <div class="ch-support">
+                <div class="row align-items-center">
+                    <div class="col-lg-7 mb-4 mb-lg-0">
+                        <span class="ch-eyebrow" style="background:rgba(255,255,255,.16);color:#fff;"><span data-lang="cs">Podpora</span><span data-lang="en">Support</span></span>
+                        <h2 class="ch-h2" style="color:#fff;"><span data-lang="cs">Podpoř rozvoj hřiště</span><span data-lang="en">Support the course</span></h2>
+                        <p><span data-lang="cs">Hřiště v Běchovicích udržujeme a rozvíjíme z vlastních sil. Každý příspěvek jde na nové koše, údržbu výhozišť, cedule a vylepšení layoutu. Díky, že nám pomáháš držet hřiště v kondici!</span><span data-lang="en">We maintain and develop the Běchovice course on our own. Every contribution goes toward new baskets, tee maintenance, signage and layout improvements. Thanks for helping keep the course in shape!</span></p>
+                        <p style="font-size:.88rem;opacity:.8;"><span data-lang="cs">Naskenuj QR v bankovní aplikaci — částku si můžeš upravit.</span><span data-lang="en">Scan the QR in your banking app — you can adjust the amount.</span></p>
+                    </div>
+                    <div class="col-lg-5 text-center">
+                        <!-- TODO: provide bank account / IBAN (+ optional amount & message). Generate SPAYD QR locally and replace. -->
+                        <div class="ch-qr ch-qr--todo" style="margin-bottom:0;">
+                            <i class="fas fa-qrcode"></i>
+                            <span data-lang="cs">QR platba<br>doplníme</span><span data-lang="en">Payment QR<br>coming soon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Community / FB group ===== -->
+    <section class="ch-section ch-section--tint" id="komunita">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-7 mb-4 mb-lg-0">
+                    <span class="ch-eyebrow"><span data-lang="cs">Komunita</span><span data-lang="en">Community</span></span>
+                    <h2 class="ch-h2"><span data-lang="cs">Běchovická FB skupina</span><span data-lang="en">Běchovice FB group</span></h2>
+                    <p class="ch-sub mb-4"><span data-lang="cs">Aktuality o hřišti, ztráty a nálezy disků, domluva na společnou hru i info o stavu hřiště. Přidej se a buď v obraze.</span><span data-lang="en">Course updates, lost & found discs, finding people to play with, and course-condition info. Join and stay in the loop.</span></p>
+                    <a class="ch-btn ch-btn--blue" href="https://www.facebook.com/groups/790034088925945" target="_blank" rel="noopener">
+                        <i class="fab fa-facebook"></i> <span data-lang="cs">Otevřít skupinu</span><span data-lang="en">Open the group</span>
+                    </a>
+                </div>
+                <div class="col-lg-5 text-center">
+                    <div class="ch-qr" style="margin-left:auto;margin-right:auto;"><img src="../../img/qr/bechovice/fb-group.svg" alt="QR – FB skupina"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Tournaments on this course ===== -->
+    <section class="ch-section" id="turnaje">
+        <div class="container">
+            <div class="ch-section__head">
+                <span class="ch-eyebrow"><span data-lang="cs">Turnaje</span><span data-lang="en">Tournaments</span></span>
+                <h2 class="ch-h2"><span data-lang="cs">Turnaje na hřišti</span><span data-lang="en">Tournaments here</span></h2>
+                <p class="ch-sub"><span data-lang="cs">Na hřišti v Běchovicích se pravidelně hrají turnaje a ligová kola. Aktuální termíny najdeš na klubové stránce akcí.</span><span data-lang="en">Běchovice regularly hosts tournaments and league rounds. Find current dates on the club events page.</span></p>
+            </div>
+            <!-- TODO: replace the placeholder below with a list of recurring/upcoming tournaments on this course. -->
+            <div class="ch-placeholder mb-4">
+                <i class="fas fa-trophy d-block"></i>
+                <p style="margin-bottom:.2rem;font-weight:700;color:var(--dgcp-ink);"><span data-lang="cs">Seznam turnajů doplníme</span><span data-lang="en">Tournament list coming soon</span></p>
+                <p style="margin:0;"><span data-lang="cs">Sem přijde přehled pravidelných turnajů a ligových kol pořádaných na tomto hřišti.</span><span data-lang="en">A list of recurring tournaments and league rounds held on this course will go here.</span></p>
+            </div>
+            <div class="text-center">
+                <a class="ch-btn ch-btn--blue" href="../../nase_turnaje.html">
+                    <i class="fas fa-calendar-alt"></i> <span data-lang="cs">Aktuální akce a turnaje</span><span data-lang="en">Current events & tournaments</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Hole flyover videos (future) ===== -->
+    <section class="ch-section ch-section--tint" id="videa">
+        <div class="container">
+            <div class="ch-section__head">
+                <span class="ch-eyebrow"><span data-lang="cs">Připravujeme</span><span data-lang="en">Coming soon</span></span>
+                <h2 class="ch-h2"><span data-lang="cs">Přelety jamek</span><span data-lang="en">Hole flyovers</span></h2>
+                <p class="ch-sub"><span data-lang="cs">Pro každou jamku chystáme video s přeletem, ať víš, kam hrát. Brzy tady.</span><span data-lang="en">We're preparing a flyover video for each hole so you know where to aim. Coming soon.</span></p>
+            </div>
+            <div class="ch-videogrid">
+                <!-- 18 placeholder tiles -->
+                <div class="ch-videotile"><i class="fas fa-play-circle"></i>1 <span>video brzy</span></div>
+                <div class="ch-videotile"><i class="fas fa-play-circle"></i>2 <span>video brzy</span></div>
+                <div class="ch-videotile"><i class="fas fa-play-circle"></i>3 <span>video brzy</span></div>
+                <div class="ch-videotile"><i class="fas fa-play-circle"></i>4 <span>video brzy</span></div>
+                <div class="ch-videotile"><i class="fas fa-play-circle"></i>5 <span>video brzy</span></div>
+                <div class="ch-videotile"><i class="fas fa-play-circle"></i>6 <span>video brzy</span></div>
+                <div class="ch-videotile"><i class="fas fa-play-circle"></i>7 <span>video brzy</span></div>
+                <div class="ch-videotile"><i class="fas fa-play-circle"></i>8 <span>video brzy</span></div>
+                <div class="ch-videotile"><i class="fas fa-play-circle"></i>9 <span>video brzy</span></div>
+                <div class="ch-videotile"><i class="fas fa-play-circle"></i>10 <span>video brzy</span></div>
+                <div class="ch-videotile"><i class="fas fa-play-circle"></i>11 <span>video brzy</span></div>
+                <div class="ch-videotile"><i class="fas fa-play-circle"></i>12 <span>video brzy</span></div>
+                <div class="ch-videotile"><i class="fas fa-play-circle"></i>13 <span>video brzy</span></div>
+                <div class="ch-videotile"><i class="fas fa-play-circle"></i>14 <span>video brzy</span></div>
+                <div class="ch-videotile"><i class="fas fa-play-circle"></i>15 <span>video brzy</span></div>
+                <div class="ch-videotile"><i class="fas fa-play-circle"></i>16 <span>video brzy</span></div>
+                <div class="ch-videotile"><i class="fas fa-play-circle"></i>17 <span>video brzy</span></div>
+                <div class="ch-videotile"><i class="fas fa-play-circle"></i>18 <span>video brzy</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Partners (placeholder) ===== -->
+    <section class="ch-section" id="partneri">
+        <div class="container">
+            <div class="ch-section__head">
+                <span class="ch-eyebrow"><span data-lang="cs">Partneři</span><span data-lang="en">Partners</span></span>
+                <h2 class="ch-h2"><span data-lang="cs">Partneři hřiště</span><span data-lang="en">Course partners</span></h2>
+                <p class="ch-sub"><span data-lang="cs">Místo pro partnery klubu a hřiště.</span><span data-lang="en">Space for club & course partners.</span></p>
+            </div>
+            <!-- TODO: add course/club partner logos here when decided. -->
+            <div class="ch-placeholder">
+                <i class="fas fa-handshake d-block"></i>
+                <p style="margin:0;"><span data-lang="cs">Tady budou loga partnerů, kteří podporují hřiště.</span><span data-lang="en">Logos of the partners supporting the course will appear here.</span></p>
+            </div>
+        </div>
+    </section>
+
+@@include('partials/footer.html', {"basePath": "../.."})
+
+@@include('partials/scripts.html', {"basePath": "../.."})
+
+    <script>
+        // Language toggle. Initial language is already applied to <html> by the head script
+        // (CZ default, browser-language aware, no-JS safe). This wires the buttons + persistence.
+        (function () {
+            var root = document.documentElement;
+            var buttons = document.querySelectorAll('[data-setlang]');
+            function syncButtons(lang) {
+                buttons.forEach(function (b) {
+                    b.classList.toggle('is-active', b.getAttribute('data-setlang') === lang);
+                });
+            }
+            function setLang(lang) {
+                lang = (lang === 'en') ? 'en' : 'cs';
+                root.classList.remove('lang-cs', 'lang-en');
+                root.classList.add('lang-' + lang);
+                root.lang = lang;
+                syncButtons(lang);
+                try { localStorage.setItem('dgcp-lang', lang); } catch (e) {}
+            }
+            syncButtons(root.classList.contains('lang-en') ? 'en' : 'cs');
+            buttons.forEach(function (b) {
+                b.addEventListener('click', function () { setLang(b.getAttribute('data-setlang')); });
+            });
+        })();
+    </script>
+</body>
+
+</html>
