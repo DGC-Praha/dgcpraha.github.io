@@ -31,9 +31,13 @@
     <meta property="og:image:width" content="1920">
     <meta property="og:image:height" content="1280">
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="theme-color" content="#003d99">
 
     <style>
         /* ========== Course hub – scoped styles ========== */
+        /* Anchor targets clear the 64px sticky topbar instead of hiding under it. */
+        html { scroll-padding-top: 72px; }
+
         :root {
             --dgcp-blue: #003d99;
             --dgcp-blue-dark: #002a6b;
@@ -73,10 +77,10 @@
             justify-content: space-between;
             height: 64px;
         }
-        .ch-topbar__brand { display: flex; align-items: center; gap: .65rem; }
+        .ch-topbar__brand { display: flex; align-items: center; gap: .65rem; min-height: 44px; }
         .ch-topbar__brand img { height: 34px; width: auto; }
         .ch-topbar__brand span {
-            color: #fff; font-weight: 700; font-size: .78rem;
+            color: #fff; font-weight: 700; font-size: .82rem;
             letter-spacing: .04em; text-transform: uppercase; opacity: .9;
         }
         .ch-langtoggle {
@@ -85,10 +89,12 @@
             border-radius: 999px;
             overflow: hidden;
         }
+        /* min-height 44px: this is the page's primary control and was a 40x27 target. */
         .ch-langtoggle button {
             background: transparent; border: 0; color: rgba(255, 255, 255, .75);
-            font-weight: 700; font-size: .72rem; letter-spacing: .06em;
-            padding: .32rem .72rem; cursor: pointer; transition: all .15s ease;
+            font-weight: 700; font-size: .82rem; letter-spacing: .06em;
+            min-width: 52px; min-height: 44px; padding: 0 .8rem;
+            cursor: pointer; transition: all .15s ease;
         }
         .ch-langtoggle button.is-active { background: #fff; color: var(--dgcp-blue); }
 
@@ -105,11 +111,16 @@
             background-size: cover;
             background-position: center;
         }
-        /* Course photo: drop a file into img/ and uncomment the URL in --ch-hero-photo below */
+        /* Phones get the 1200px cut (224KB); only wide screens pull the 1920px original (480KB).
+           Declared here rather than inline so the media query can win. */
         .ch-hero.has-photo {
+            --ch-hero-photo: url('../../img/bechovice-hero-1200.jpg?v=3');
             background:
                 linear-gradient(180deg, rgba(0, 42, 107, .15) 0%, rgba(0, 42, 107, .55) 55%, rgba(0, 42, 107, .92) 100%),
                 var(--ch-hero-photo) center/cover no-repeat;
+        }
+        @media (min-width: 992px) {
+            .ch-hero.has-photo { --ch-hero-photo: url('../../img/bechovice-hero.jpg?v=2'); }
         }
         .ch-hero__inner { padding: 3rem 0 3.2rem; width: 100%; }
         .ch-hero__eyebrow {
@@ -192,6 +203,12 @@
         }
         .ch-qr img, .ch-qr svg { width: 100%; height: 100%; display: block; }
         .ch-qrhint { font-size: .8rem; color: var(--dgcp-muted); margin-top: .5rem; }
+        /* You cannot scan a QR with the phone displaying it, and each block costs ~190px of scroll.
+           On phones we drop the ones whose card already has a button; the donation QR has no
+           button equivalent, so it stays. */
+        @media (max-width: 767.98px) {
+            .ch-qrcard .ch-qr, #komunita .ch-qr { display: none; }
+        }
 
         /* ---------- Steps (how to score / first time) ---------- */
         .ch-steps { counter-reset: step; display: grid; gap: 1rem; }
@@ -316,7 +333,7 @@
     <div class="ch-topbar">
         <div class="container">
             <a class="ch-topbar__brand" href="../../index.html">
-                <img src="../../img/logo/dgcp-logo-final-white.png" alt="DGC Praha">
+                <img src="../../img/logo/dgcp-logo-final-white-96.png" alt="DGC Praha" width="96" height="92">
                 <span lang="cs">DiscGolfPark Běchovice</span>
             </a>
             <div class="ch-langtoggle" role="group" aria-label="Language / Jazyk">
@@ -327,7 +344,7 @@
     </div>
 
     <!-- ===== Hero ===== -->
-    <header class="ch-hero has-photo" id="hero" style="--ch-hero-photo:url('../../img/bechovice-hero.jpg?v=2');">
+    <header class="ch-hero has-photo" id="hero">
         <div class="container">
             <div class="ch-hero__inner">
                 <div class="ch-hero__eyebrow">
@@ -343,7 +360,7 @@
                     <span class="ch-chip"><i class="fas fa-flag"></i> 9 <span data-lang="cs">nebo</span><span data-lang="en">or</span> 18 <span data-lang="cs">jamek</span><span data-lang="en">holes</span></span>
                     <span class="ch-chip"><i class="fas fa-layer-group"></i> 3 <span data-lang="cs">layouty · 994–2&nbsp;587 m</span><span data-lang="en">layouts · 994–2,587 m</span></span>
                     <span class="ch-chip"><i class="fas fa-coins"></i> <span data-lang="cs">Hraní zdarma</span><span data-lang="en">Free to play</span></span>
-                    <span class="ch-chip"><i class="fas fa-clock"></i> 1–3,5 <span data-lang="cs">hod.</span><span data-lang="en">hrs</span></span>
+                    <span class="ch-chip"><i class="fas fa-clock"></i> <span data-lang="cs">1–3,5 hod.</span><span data-lang="en">1–3.5 hrs</span></span>
                     <span class="ch-chip"><i class="fas fa-trophy"></i> <span data-lang="cs">Dějiště MČR 2023</span><span data-lang="en">2023 Nat'l Champs venue</span></span>
                 </div>
                 <div class="ch-hero__cta">
@@ -705,7 +722,9 @@
 
 @@include('partials/footer.html', {"basePath": "../.."})
 
-@@include('partials/scripts.html', {"basePath": "../.."})
+    <!-- partials/scripts.html (jQuery + Bootstrap JS + easing + agency.js) is deliberately NOT
+         included: this page has no js-scroll-trigger, no data-toggle and no #mainNav, so all of it
+         was dead weight on a phone. The scripts below are vanilla. -->
 
     <script>
         // Language toggle. Initial language is already applied to <html> by the head script
