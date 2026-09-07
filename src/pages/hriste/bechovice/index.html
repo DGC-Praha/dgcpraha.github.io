@@ -75,6 +75,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: .75rem;
             height: 64px;
         }
         .ch-topbar__brand { display: flex; align-items: center; gap: .65rem; min-height: 44px; }
@@ -83,6 +84,12 @@
             color: #fff; font-weight: 700; font-size: .78rem;
             letter-spacing: .04em; text-transform: uppercase; opacity: .9;
             white-space: nowrap;
+        }
+        /* Narrow phones cannot fit the full name next to a 44px-tall language toggle. */
+        .ch-topbar__short { display: none; }
+        @media (max-width: 479.98px) {
+            .ch-topbar__full { display: none; }
+            .ch-topbar__short { display: inline; }
         }
         .ch-langtoggle {
             display: inline-flex;
@@ -371,7 +378,8 @@
         <div class="container">
             <a class="ch-topbar__brand" href="../../index.html">
                 <img src="../../img/logo/dgcp-logo-final-white-96.png" alt="DGC Praha" width="96" height="92">
-                <span lang="cs">DiscGolfPark Běchovice</span>
+                <span lang="cs" class="ch-topbar__full">DiscGolfPark Běchovice</span>
+                <span lang="cs" class="ch-topbar__short">Běchovice</span>
             </a>
             <div class="ch-langtoggle" role="group" aria-label="Language / Jazyk">
                 <button type="button" data-setlang="cs" class="is-active" aria-label="Česky">CZ</button>
