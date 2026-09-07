@@ -19,6 +19,18 @@
 @@include('partials/head.html', {"title": "DiscGolfPark Běchovice – DGC Praha", "basePath": "../.."})
 
     <meta name="description" content="DiscGolfPark Běchovice – vše, co potřebuješ vědět před hrou: jak skórovat, pravidla pro nováčky, podpora hřiště a turnaje. / Everything you need before you play in Běchovice.">
+    <link rel="canonical" href="https://dgcp.cz/hriste/bechovice/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://dgcp.cz/hriste/bechovice/">
+    <meta property="og:site_name" content="DGC Praha">
+    <meta property="og:locale" content="cs_CZ">
+    <meta property="og:title" content="DiscGolfPark Běchovice – hřiště DGC Praha">
+    <meta property="og:description" content="Vše, co potřebuješ vědět před hrou: jak skórovat, pravidla pro nováčky, podpora hřiště a turnaje.">
+    <meta property="og:image" content="https://dgcp.cz/img/bechovice-hero.jpg?v=2">
+    <meta property="og:image:width" content="1920">
+    <meta property="og:image:height" content="1280">
+    <meta name="twitter:card" content="summary_large_image">
 
     <style>
         /* ========== Course hub – scoped styles ========== */
@@ -179,12 +191,6 @@
             margin: 0 auto 1rem;
         }
         .ch-qr img, .ch-qr svg { width: 100%; height: 100%; display: block; }
-        .ch-qr--todo {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: .4rem; border: 2px dashed var(--dgcp-blue); color: var(--dgcp-blue);
-            background: var(--dgcp-blue-soft); box-shadow: none; font-size: .8rem; font-weight: 700; text-align: center;
-        }
-        .ch-qr--todo i { font-size: 1.8rem; }
         .ch-qrhint { font-size: .8rem; color: var(--dgcp-muted); margin-top: .5rem; }
 
         /* ---------- Steps (how to score / first time) ---------- */
@@ -243,9 +249,24 @@
             text-shadow: 0 1px 6px rgba(0, 0, 0, .5);
         }
         .ch-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-        .ch-videonote { text-align: center; color: var(--dgcp-muted); font-size: .9rem; margin-top: 1.6rem; }
-        .ch-videonote i { color: var(--dgcp-blue); margin-right: .35rem; }
+        .ch-note { text-align: center; color: var(--dgcp-muted); font-size: .9rem; margin-top: 1.6rem; }
+        .ch-note i { color: var(--dgcp-blue); margin-right: .35rem; }
         @media (max-width: 575.98px) { .ch-videogrid { grid-template-columns: 1fr; } }
+
+        /* ---------- Partner logos ---------- */
+        .ch-partners {
+            display: grid; gap: 1.1rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            align-items: stretch;
+        }
+        .ch-partner {
+            display: flex; align-items: center; justify-content: center;
+            background: #fff; border: 1px solid var(--dgcp-line); border-radius: var(--dgcp-radius);
+            box-shadow: var(--dgcp-shadow); padding: 1.6rem 1.4rem; min-height: 130px;
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+        .ch-partner:hover { transform: translateY(-4px); box-shadow: var(--dgcp-shadow-lg); }
+        .ch-partner img { max-width: 100%; max-height: 66px; width: auto; height: auto; object-fit: contain; }
 
         /* ---------- Support highlight ---------- */
         .ch-support {
@@ -259,6 +280,8 @@
 
         .ch-tablink { color: var(--dgcp-blue); font-weight: 700; text-decoration: none; }
         .ch-tablink:hover { text-decoration: underline; }
+        .ch-supportlink { color: #fff; font-weight: 700; text-decoration: underline; }
+        .ch-supportlink:hover { color: #fff; }
 
         @media (max-width: 575.98px) {
             .ch-hero { min-height: 70vh; }
@@ -298,6 +321,7 @@
                 </p>
                 <div class="ch-chips">
                     <span class="ch-chip"><i class="fas fa-flag"></i> 18 <span data-lang="cs">jamek</span><span data-lang="en">holes</span></span>
+                    <span class="ch-chip"><i class="fas fa-ruler-horizontal"></i> 2&nbsp;587 m · par 62</span>
                     <span class="ch-chip"><i class="fas fa-coins"></i> <span data-lang="cs">Hraní zdarma</span><span data-lang="en">Free to play</span></span>
                     <span class="ch-chip"><i class="fas fa-clock"></i> 2–3,5 <span data-lang="cs">hod.</span><span data-lang="en">hrs</span></span>
                     <span class="ch-chip"><i class="fas fa-trophy"></i> <span data-lang="cs">Dějiště MČR 2023</span><span data-lang="en">2023 Nat'l Champs venue</span></span>
@@ -339,13 +363,16 @@
                     <div class="ch-card ch-qrcard">
                         <div class="ch-card__icon"><i class="fas fa-user-plus"></i></div>
                         <h3><span data-lang="cs">Přihláška do klubu</span><span data-lang="en">Join the club</span></h3>
-                        <p><span data-lang="cs">Naskenuj a vyplň přihlášku — staň se členem DGC Praha.</span><span data-lang="en">Scan and fill out the form to become a DGC Praha member.</span></p>
-                        <!-- NOTE: default target = members.dgcp.cz. Confirm/replace signup URL & regenerate QR. -->
-                        <div class="ch-qr"><img src="../../img/qr/bechovice/signup.svg" alt="QR – přihláška"></div>
+                        <p><span data-lang="cs">Naskenuj a vyplň přihlášku — staň se členem DGC Praha. Součástí formuláře je i QR kód na zaplacení příspěvku.</span><span data-lang="en">Scan and fill out the form to become a DGC Praha member. The form also contains a payment QR code.</span></p>
+                        <div class="ch-qr"><img src="../../img/qr/bechovice/signup.svg" alt="QR – přihláška do klubu"></div>
                         <div class="ch-card__foot">
-                            <a class="ch-btn ch-btn--outline ch-btn--block" href="https://members.dgcp.cz" target="_blank" rel="noopener">
+                            <a class="ch-btn ch-btn--outline ch-btn--block" href="https://forms.gle/1EamaiqDLtE96piL7" target="_blank" rel="noopener">
                                 <span data-lang="cs">Otevřít přihlášku</span><span data-lang="en">Open the form</span>
                             </a>
+                            <p class="ch-qrhint mb-0">
+                                <span data-lang="cs">Už jsi člen? Přihlas se do <a class="ch-tablink" href="https://members.dgcp.cz" target="_blank" rel="noopener">členského portálu</a>.</span>
+                                <span data-lang="en">Already a member? Sign in to the <a class="ch-tablink" href="https://members.dgcp.cz" target="_blank" rel="noopener">members portal</a>.</span>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -359,10 +386,10 @@
             <div class="ch-section__head">
                 <span class="ch-eyebrow"><span data-lang="cs">Skórování</span><span data-lang="en">Scoring</span></span>
                 <h2 class="ch-h2"><span data-lang="cs">Zapisuj si skóre v appce</span><span data-lang="en">Track your score in an app</span></h2>
-                <p class="ch-sub"><span data-lang="cs">Hřiště je nahrané v obou appkách — vyber si a spusť kolo přímo z mobilu.</span><span data-lang="en">The course is loaded in both apps — pick one and start a round from your phone.</span></p>
+                <p class="ch-sub"><span data-lang="cs">Hřiště je nahrané v UDisc — naskenuj a spusť kolo přímo z mobilu.</span><span data-lang="en">The course is loaded in UDisc — scan and start a round from your phone.</span></p>
             </div>
-            <div class="row">
-                <div class="col-md-6 mb-4">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-5 mb-4">
                     <div class="ch-card ch-qrcard">
                         <div class="ch-card__icon"><i class="fas fa-mobile-alt"></i></div>
                         <h3>UDisc</h3>
@@ -372,24 +399,6 @@
                             <a class="ch-btn ch-btn--outline ch-btn--block" href="https://udisc.com/courses/disc-golf-park-bechovice-h30U" target="_blank" rel="noopener">
                                 <span data-lang="cs">Otevřít v UDisc</span><span data-lang="en">Open in UDisc</span>
                             </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 mb-4">
-                    <div class="ch-card ch-qrcard">
-                        <div class="ch-card__icon"><i class="fas fa-bullseye"></i></div>
-                        <h3>Stockshot</h3>
-                        <p><span data-lang="cs">Česká discgolfová appka. Naskenuj a zapisuj si skóre na našem hřišti.</span><span data-lang="en">Czech disc golf app. Scan to keep score on our course.</span></p>
-                        <!-- TODO: provide Stockshot course URL, then: qrencode -t SVG -l Q -m 2 --foreground=003d99 -o img/qr/bechovice/stockshot.svg "<URL>" -->
-                        <div class="ch-qr ch-qr--todo">
-                            <i class="fas fa-qrcode"></i>
-                            <span data-lang="cs">QR doplníme<br>(čekáme na odkaz)</span><span data-lang="en">QR coming<br>(awaiting link)</span>
-                        </div>
-                        <div class="ch-card__foot">
-                            <!-- TODO: once you have the Stockshot URL, replace this with <a class="ch-btn ch-btn--outline ch-btn--block" href="..." target="_blank" rel="noopener"> -->
-                            <button type="button" class="ch-btn ch-btn--outline ch-btn--block" style="opacity:.5;" disabled>
-                                <span data-lang="cs">Brzy ve Stockshot</span><span data-lang="en">Stockshot coming soon</span>
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -502,13 +511,11 @@
                         <span class="ch-eyebrow" style="background:rgba(255,255,255,.16);color:#fff;"><span data-lang="cs">Podpora</span><span data-lang="en">Support</span></span>
                         <h2 class="ch-h2" style="color:#fff;"><span data-lang="cs">Podpoř rozvoj hřiště</span><span data-lang="en">Support the course</span></h2>
                         <p><span data-lang="cs">Hřiště v Běchovicích udržujeme a rozvíjíme z vlastních sil. Každý příspěvek jde na nové koše, údržbu výhozišť, cedule a vylepšení layoutu. Díky, že nám pomáháš držet hřiště v kondici!</span><span data-lang="en">We maintain and develop the Běchovice course on our own. Every contribution goes toward new baskets, tee maintenance, signage and layout improvements. Thanks for helping keep the course in shape!</span></p>
-                        <p style="font-size:.88rem;opacity:.8;"><span data-lang="cs">Naskenuj QR v bankovní aplikaci — částku si můžeš upravit.</span><span data-lang="en">Scan the QR in your banking app — you can adjust the amount.</span></p>
+                        <p style="font-size:.88rem;opacity:.8;"><span data-lang="cs">Naskenuj QR v bankovní aplikaci — přednastavených 200 Kč si můžeš upravit. Posílá se na klubový <a class="ch-supportlink" href="https://ib.fio.cz/ib/transparent?a=2601549495" target="_blank" rel="noopener">transparentní účet 2601549495 / 2010</a>, kde je každá koruna vidět.</span><span data-lang="en">Scan the QR in your banking app — the preset 200 CZK can be changed. It goes to the club's <a class="ch-supportlink" href="https://ib.fio.cz/ib/transparent?a=2601549495" target="_blank" rel="noopener">transparent account 2601549495 / 2010</a>, where every crown is public.</span></p>
                     </div>
                     <div class="col-lg-5 text-center">
-                        <!-- TODO: provide bank account / IBAN (+ optional amount & message). Generate SPAYD QR locally and replace. -->
-                        <div class="ch-qr ch-qr--todo" style="margin-bottom:0;">
-                            <i class="fas fa-qrcode"></i>
-                            <span data-lang="cs">QR platba<br>doplníme</span><span data-lang="en">Payment QR<br>coming soon</span>
+                        <div class="ch-qr" style="margin:0 auto;">
+                            <img src="../../img/qr/bechovice/donate.svg" alt="QR platba – podpora hřiště Běchovice">
                         </div>
                     </div>
                 </div>
@@ -595,7 +602,7 @@
                     </button>
                 </div>
             </div>
-            <p class="ch-videonote">
+            <p class="ch-note">
                 <i class="fas fa-helicopter"></i>
                 <span data-lang="cs">Přelety jednotlivých jamek připravujeme — brzy tady.</span><span data-lang="en">Hole-by-hole flyovers are coming soon.</span>
             </p>
@@ -608,13 +615,24 @@
             <div class="ch-section__head">
                 <span class="ch-eyebrow"><span data-lang="cs">Partneři</span><span data-lang="en">Partners</span></span>
                 <h2 class="ch-h2"><span data-lang="cs">Partneři hřiště</span><span data-lang="en">Course partners</span></h2>
-                <p class="ch-sub"><span data-lang="cs">Místo pro partnery klubu a hřiště.</span><span data-lang="en">Space for club & course partners.</span></p>
+                <p class="ch-sub"><span data-lang="cs">Bez nich by to nešlo — díky, že podporujete pražský discgolf.</span><span data-lang="en">We couldn't do it without them — thanks for supporting disc golf in Prague.</span></p>
             </div>
-            <!-- TODO: add course/club partner logos here when decided. -->
-            <div class="ch-placeholder">
-                <i class="fas fa-handshake d-block"></i>
-                <p style="margin:0;"><span data-lang="cs">Tady budou loga partnerů, kteří podporují hřiště.</span><span data-lang="en">Logos of the partners supporting the course will appear here.</span></p>
+            <div class="ch-partners">
+                <a class="ch-partner" href="https://www.ultimo.cz" target="_blank" rel="noopener">
+                    <img src="../../img/partners/ultimo_logo.png" alt="Ultimo.cz" loading="lazy" width="800" height="280">
+                </a>
+                <a class="ch-partner" href="https://www.bighub.ai" target="_blank" rel="noopener">
+                    <img src="../../img/partners/bighub_logo.svg" alt="BigHub.ai" loading="lazy" width="400" height="158">
+                </a>
+                <a class="ch-partner" href="https://www.secheron.com/" target="_blank" rel="noopener">
+                    <img src="../../img/partners/secheron_logo.svg" alt="Sécheron" loading="lazy" width="400" height="95">
+                </a>
             </div>
+            <p class="ch-note">
+                <i class="fas fa-handshake"></i>
+                <span data-lang="cs">Chceš podpořit hřiště nebo klub? <a class="ch-tablink" href="../../index.html#kontakt">Napiš nám</a>.</span>
+                <span data-lang="en">Want to support the course or the club? <a class="ch-tablink" href="../../index.html#kontakt">Get in touch</a>.</span>
+            </p>
         </div>
     </section>
 
