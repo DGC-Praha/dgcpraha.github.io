@@ -323,6 +323,9 @@
         }
         .ch-tn__tag--open { background: #e6f5ec; color: #1d6b3c; }
         .ch-tn__empty { color: var(--dgcp-muted); font-size: .95rem; margin: 0; }
+        .ch-tn__list > li.is-more { display: none; }
+        .ch-tn__list.is-expanded > li.is-more { display: block; }
+        .ch-tn__morewrap { text-align: center; margin-top: 1rem; }
 
         /* ---------- Partner logos ---------- */
         .ch-partners {
@@ -666,21 +669,16 @@
             <div class="ch-section__head">
                 <span class="ch-eyebrow"><span data-lang="cs">Turnaje</span><span data-lang="en">Tournaments</span></span>
                 <h2 class="ch-h2"><span data-lang="cs">Turnaje na hřišti</span><span data-lang="en">Tournaments here</span></h2>
-                <p class="ch-sub"><span data-lang="cs">Na hřišti v Běchovicích se pravidelně hrají turnaje a ligová kola. Aktuální termíny najdeš na klubové stránce akcí.</span><span data-lang="en">Běchovice regularly hosts tournaments and league rounds. Find current dates on the club events page.</span></p>
+                <p class="ch-sub"><span data-lang="cs">Od klubových kol a nočních glow turnajů až po Amatérské MČR — na tomto hřišti se hraje celý rok.</span><span data-lang="en">From club rounds and night glow events to the amateur national championship — this course is played all year.</span></p>
             </div>
             <!-- Filled from the tagovacka course API on scroll; the block below is the no-JS state. -->
-            <div class="ch-tn mb-4" id="ch-tn"
+            <div class="ch-tn" id="ch-tn"
                 data-endpoint="https://api-discgolf-tags.dominikvoda.com/api/courses/6f3d926c-63c4-41a6-bf9e-01ab6499b75b/tournaments"
                 data-past="3">
                 <div class="ch-placeholder">
                     <i class="fas fa-trophy d-block"></i>
-                    <p style="margin:0;"><span data-lang="cs">Na hřišti se pravidelně hrají turnaje a ligová kola — termíny najdeš na klubové stránce akcí.</span><span data-lang="en">The course regularly hosts tournaments and league rounds — dates are on the club events page.</span></p>
+                    <p style="margin:0;"><span data-lang="cs">Na hřišti se pravidelně hrají turnaje a ligová kola.</span><span data-lang="en">The course regularly hosts tournaments and league rounds.</span></p>
                 </div>
-            </div>
-            <div class="text-center">
-                <a class="ch-btn ch-btn--blue" href="../../nase_turnaje.html">
-                    <i class="fas fa-calendar-alt"></i> <span data-lang="cs">Aktuální akce a turnaje</span><span data-lang="en">Current events & tournaments</span>
-                </a>
             </div>
         </div>
     </section>
@@ -838,11 +836,12 @@
                 if (t.playerLimit) bits.push('<span>' + L('limit ' + t.playerLimit + ' hráčů', t.playerLimit + ' player cap') + '</span>');
                 return bits.length ? '<span class="ch-tn__meta">' + bits.join('') + '</span>' : '';
             }
-            function row(t, isUpcoming) {
+            function row(t, isUpcoming, extra) {
+                var li = '<li' + (extra ? ' class="is-more"' : '') + '>';
                 var inner = '<span class="ch-tn__date">' + dateLabel(t.dateStart, t.dateEnd) + '</span>'
                     + '<span class="ch-tn__name">' + esc(t.name) + '</span>' + meta(t, isUpcoming);
-                if (!t.idgV2Uuid) return '<li><span class="ch-tn__row">' + inner + '</span></li>';
-                return '<li><a class="ch-tn__row" href="https://ceskydiscgolf.cz/idg/turnaje/'
+                if (!t.idgV2Uuid) return li + '<span class="ch-tn__row">' + inner + '</span></li>';
+                return li + '<a class="ch-tn__row" href="https://ceskydiscgolf.cz/idg/turnaje/'
                     + encodeURIComponent(t.idgV2Uuid) + '" target="_blank" rel="noopener">' + inner + '</a></li>';
             }
             function group(headingHtml, icon, rowsHtml) {
@@ -856,12 +855,13 @@
                 var byStart = function (a, b) { return a.dateStart < b.dateStart ? -1 : a.dateStart > b.dateStart ? 1 : 0; };
 
                 var upcoming = list.filter(function (t) { return (t.dateEnd || t.dateStart) >= today; }).sort(byStart);
-                // Past is capped, most recent first, and never reaches further back than last year.
+                // Most recent first, never reaching further back than last year. Everything past the
+                // first `maxPast` is rendered but hidden until the reader asks for it.
                 var maxPast = parseInt(box.getAttribute('data-past'), 10) || 3;
                 var past = list.filter(function (t) {
                     var y = parts(t.dateStart).y;
                     return (t.dateEnd || t.dateStart) < today && (y === thisYear || y === thisYear - 1);
-                }).sort(byStart).reverse().slice(0, maxPast);
+                }).sort(byStart).reverse();
 
                 if (!upcoming.length && !past.length) return false;
 
@@ -869,13 +869,31 @@
                 html += group(L('Nejbližší turnaje', 'Coming up'), 'fa-calendar-alt',
                     upcoming.length
                         ? '<ul class="ch-tn__list">' + upcoming.map(function (t) { return row(t, true); }).join('') + '</ul>'
-                        : '<p class="ch-tn__empty">' + L('Právě není vypsaný žádný turnaj. Mrkni na klubovou stránku akcí.',
-                            'No tournament is listed right now. Check the club events page.') + '</p>');
+                        : '<p class="ch-tn__empty">' + L('Právě tu není vypsaný žádný turnaj.',
+                            'No tournament is listed here right now.') + '</p>');
                 if (past.length) {
-                    html += group(L('Naposledy odehrané', 'Recently played'), 'fa-flag-checkered',
-                        '<ul class="ch-tn__list">' + past.map(function (t) { return row(t, false); }).join('') + '</ul>');
+                    var hidden = past.length - maxPast;
+                    var rows = '<ul class="ch-tn__list" id="ch-tn-past">'
+                        + past.map(function (t, i) { return row(t, false, i >= maxPast); }).join('') + '</ul>';
+                    if (hidden > 0) {
+                        rows += '<div class="ch-tn__morewrap"><button type="button" class="ch-btn ch-btn--outline"'
+                            + ' id="ch-tn-more" aria-expanded="false" aria-controls="ch-tn-past">'
+                            + '<i class="fas fa-chevron-down"></i>'
+                            + L('Zobrazit starší turnaje (' + hidden + ')', 'Show older tournaments (' + hidden + ')')
+                            + '</button></div>';
+                    }
+                    html += group(L('Naposledy odehrané', 'Recently played'), 'fa-flag-checkered', rows);
                 }
                 box.innerHTML = html;
+
+                var more = document.getElementById('ch-tn-more');
+                if (more) {
+                    more.addEventListener('click', function () {
+                        document.getElementById('ch-tn-past').classList.add('is-expanded');
+                        more.setAttribute('aria-expanded', 'true');
+                        more.parentNode.removeChild(more);
+                    });
+                }
                 return true;
             }
 
