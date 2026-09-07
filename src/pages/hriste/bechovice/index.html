@@ -80,8 +80,9 @@
         .ch-topbar__brand { display: flex; align-items: center; gap: .65rem; min-height: 44px; }
         .ch-topbar__brand img { height: 34px; width: auto; }
         .ch-topbar__brand span {
-            color: #fff; font-weight: 700; font-size: .82rem;
+            color: #fff; font-weight: 700; font-size: .78rem;
             letter-spacing: .04em; text-transform: uppercase; opacity: .9;
+            white-space: nowrap;
         }
         .ch-langtoggle {
             display: inline-flex;
@@ -289,6 +290,39 @@
         .ch-layout__stats [data-lang] { color: var(--dgcp-muted); }
         .ch-layout__stats strong { font-weight: 700; white-space: nowrap; }
         .ch-layout__stats strong.is-text { white-space: normal; text-align: right; }
+
+        /* ---------- Tournament list (loaded from the tagovacka API) ---------- */
+        .ch-tn__group + .ch-tn__group { margin-top: 2rem; }
+        .ch-tn__h {
+            font-size: 1.05rem; font-weight: 700; margin: 0 0 .9rem;
+            display: flex; align-items: center; gap: .5rem;
+        }
+        .ch-tn__h i { color: var(--dgcp-blue); font-size: .95rem; }
+        .ch-tn__list { list-style: none; padding: 0; margin: 0; display: grid; gap: .7rem; }
+        .ch-tn__row {
+            display: block; text-decoration: none; color: inherit;
+            background: #fff; border: 1px solid var(--dgcp-line); border-radius: 14px;
+            padding: .95rem 1.1rem; transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+        }
+        .ch-tn__row:hover, .ch-tn__row:focus-visible {
+            text-decoration: none; color: inherit; transform: translateY(-2px);
+            border-color: var(--dgcp-blue); box-shadow: var(--dgcp-shadow);
+        }
+        .ch-tn__date {
+            display: block; font-size: .78rem; font-weight: 700; letter-spacing: .06em;
+            text-transform: uppercase; color: var(--dgcp-blue); margin-bottom: .2rem;
+        }
+        .ch-tn__name { display: block; font-weight: 700; font-size: 1rem; line-height: 1.3; }
+        .ch-tn__meta {
+            display: flex; flex-wrap: wrap; gap: .3rem .5rem;
+            margin-top: .45rem; font-size: .82rem; color: var(--dgcp-muted);
+        }
+        .ch-tn__tag {
+            background: var(--dgcp-blue-soft); color: var(--dgcp-blue);
+            border-radius: 999px; padding: .1rem .55rem; font-weight: 700; font-size: .76rem;
+        }
+        .ch-tn__tag--open { background: #e6f5ec; color: #1d6b3c; }
+        .ch-tn__empty { color: var(--dgcp-muted); font-size: .95rem; margin: 0; }
 
         /* ---------- Partner logos ---------- */
         .ch-partners {
@@ -634,11 +668,14 @@
                 <h2 class="ch-h2"><span data-lang="cs">Turnaje na hřišti</span><span data-lang="en">Tournaments here</span></h2>
                 <p class="ch-sub"><span data-lang="cs">Na hřišti v Běchovicích se pravidelně hrají turnaje a ligová kola. Aktuální termíny najdeš na klubové stránce akcí.</span><span data-lang="en">Běchovice regularly hosts tournaments and league rounds. Find current dates on the club events page.</span></p>
             </div>
-            <!-- TODO: replace the placeholder below with a list of recurring/upcoming tournaments on this course. -->
-            <div class="ch-placeholder mb-4">
-                <i class="fas fa-trophy d-block"></i>
-                <p style="margin-bottom:.2rem;font-weight:700;color:var(--dgcp-ink);"><span data-lang="cs">Seznam turnajů doplníme</span><span data-lang="en">Tournament list coming soon</span></p>
-                <p style="margin:0;"><span data-lang="cs">Sem přijde přehled pravidelných turnajů a ligových kol pořádaných na tomto hřišti.</span><span data-lang="en">A list of recurring tournaments and league rounds held on this course will go here.</span></p>
+            <!-- Filled from the tagovacka course API on scroll; the block below is the no-JS state. -->
+            <div class="ch-tn mb-4" id="ch-tn"
+                data-endpoint="https://api-discgolf-tags.dominikvoda.com/api/courses/6f3d926c-63c4-41a6-bf9e-01ab6499b75b/tournaments"
+                data-past="3">
+                <div class="ch-placeholder">
+                    <i class="fas fa-trophy d-block"></i>
+                    <p style="margin:0;"><span data-lang="cs">Na hřišti se pravidelně hrají turnaje a ligová kola — termíny najdeš na klubové stránce akcí.</span><span data-lang="en">The course regularly hosts tournaments and league rounds — dates are on the club events page.</span></p>
+                </div>
             </div>
             <div class="text-center">
                 <a class="ch-btn ch-btn--blue" href="../../nase_turnaje.html">
@@ -749,6 +786,120 @@
             buttons.forEach(function (b) {
                 b.addEventListener('click', function () { setLang(b.getAttribute('data-setlang')); });
             });
+        })();
+
+        // Tournaments on this course, from the tagovacka proxy. Fetched when the section nears the
+        // viewport so it costs a phone nothing on first paint; on any failure the no-JS block stays.
+        (function () {
+            var box = document.getElementById('ch-tn');
+            if (!box || !window.fetch) return;
+
+            var CS_MONTH_DOT = true;
+            var EN_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+            function esc(s) {
+                return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+                    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+                });
+            }
+            function L(cs, en) {
+                return '<span data-lang="cs">' + cs + '</span><span data-lang="en">' + en + '</span>';
+            }
+            function parts(iso) {
+                var p = String(iso).split('-');
+                return { y: +p[0], m: +p[1], d: +p[2] };
+            }
+            // "13. 9. 2026" / "13 Sep 2026", collapsing ranges: "14.–16. 8. 2026", "14–16 Aug 2026"
+            function dateLabel(startIso, endIso) {
+                var a = parts(startIso), b = endIso ? parts(endIso) : a;
+                var cs, en;
+                if (a.y === b.y && a.m === b.m && a.d === b.d) {
+                    cs = a.d + '. ' + a.m + '. ' + a.y;
+                    en = a.d + ' ' + EN_MONTHS[a.m - 1] + ' ' + a.y;
+                } else if (a.y === b.y && a.m === b.m) {
+                    cs = a.d + '.–' + b.d + '. ' + a.m + '. ' + a.y;
+                    en = a.d + '–' + b.d + ' ' + EN_MONTHS[a.m - 1] + ' ' + a.y;
+                } else if (a.y === b.y) {
+                    cs = a.d + '. ' + a.m + '. – ' + b.d + '. ' + b.m + '. ' + a.y;
+                    en = a.d + ' ' + EN_MONTHS[a.m - 1] + ' – ' + b.d + ' ' + EN_MONTHS[b.m - 1] + ' ' + a.y;
+                } else {
+                    cs = a.d + '. ' + a.m + '. ' + a.y + ' – ' + b.d + '. ' + b.m + '. ' + b.y;
+                    en = a.d + ' ' + EN_MONTHS[a.m - 1] + ' ' + a.y + ' – ' + b.d + ' ' + EN_MONTHS[b.m - 1] + ' ' + b.y;
+                }
+                return L(cs, en);
+            }
+            function meta(t, isUpcoming) {
+                var bits = [];
+                if (t.cadgTier) bits.push('<span class="ch-tn__tag">' + esc(t.cadgTier) + '</span>');
+                if (t.pdgaTier) bits.push('<span class="ch-tn__tag">PDGA ' + esc(t.pdgaTier) + '</span>');
+                if (isUpcoming && t.registrationStatus === 'open') {
+                    bits.push('<span class="ch-tn__tag ch-tn__tag--open">' + L('Registrace otevřená', 'Registration open') + '</span>');
+                }
+                if (t.playerLimit) bits.push('<span>' + L('limit ' + t.playerLimit + ' hráčů', t.playerLimit + ' player cap') + '</span>');
+                return bits.length ? '<span class="ch-tn__meta">' + bits.join('') + '</span>' : '';
+            }
+            function row(t, isUpcoming) {
+                var inner = '<span class="ch-tn__date">' + dateLabel(t.dateStart, t.dateEnd) + '</span>'
+                    + '<span class="ch-tn__name">' + esc(t.name) + '</span>' + meta(t, isUpcoming);
+                if (!t.idgV2Uuid) return '<li><span class="ch-tn__row">' + inner + '</span></li>';
+                return '<li><a class="ch-tn__row" href="https://ceskydiscgolf.cz/idg/turnaje/'
+                    + encodeURIComponent(t.idgV2Uuid) + '" target="_blank" rel="noopener">' + inner + '</a></li>';
+            }
+            function group(headingHtml, icon, rowsHtml) {
+                return '<div class="ch-tn__group"><h3 class="ch-tn__h"><i class="fas ' + icon + '"></i>'
+                    + headingHtml + '</h3>' + rowsHtml + '</div>';
+            }
+
+            function render(list) {
+                var today = new Date().toISOString().slice(0, 10);
+                var thisYear = new Date().getFullYear();
+                var byStart = function (a, b) { return a.dateStart < b.dateStart ? -1 : a.dateStart > b.dateStart ? 1 : 0; };
+
+                var upcoming = list.filter(function (t) { return (t.dateEnd || t.dateStart) >= today; }).sort(byStart);
+                // Past is capped, most recent first, and never reaches further back than last year.
+                var maxPast = parseInt(box.getAttribute('data-past'), 10) || 3;
+                var past = list.filter(function (t) {
+                    var y = parts(t.dateStart).y;
+                    return (t.dateEnd || t.dateStart) < today && (y === thisYear || y === thisYear - 1);
+                }).sort(byStart).reverse().slice(0, maxPast);
+
+                if (!upcoming.length && !past.length) return false;
+
+                var html = '';
+                html += group(L('Nejbližší turnaje', 'Coming up'), 'fa-calendar-alt',
+                    upcoming.length
+                        ? '<ul class="ch-tn__list">' + upcoming.map(function (t) { return row(t, true); }).join('') + '</ul>'
+                        : '<p class="ch-tn__empty">' + L('Právě není vypsaný žádný turnaj. Mrkni na klubovou stránku akcí.',
+                            'No tournament is listed right now. Check the club events page.') + '</p>');
+                if (past.length) {
+                    html += group(L('Naposledy odehrané', 'Recently played'), 'fa-flag-checkered',
+                        '<ul class="ch-tn__list">' + past.map(function (t) { return row(t, false); }).join('') + '</ul>');
+                }
+                box.innerHTML = html;
+                return true;
+            }
+
+            var started = false;
+            function load() {
+                if (started) return;
+                started = true;
+                fetch(box.getAttribute('data-endpoint'), { mode: 'cors', credentials: 'omit' })
+                    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+                    .then(function (d) {
+                        var list = (d && d.tournaments) || [];
+                        if (Array.isArray(list) && list.length) render(list);
+                    })
+                    .catch(function () { /* leave the static fallback in place */ });
+            }
+
+            if ('IntersectionObserver' in window) {
+                var io = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (e) { if (e.isIntersecting) { io.disconnect(); load(); } });
+                }, { rootMargin: '400px 0px' });
+                io.observe(box);
+            } else {
+                load();
+            }
         })();
 
         // Click-to-load YouTube facades — load the iframe only when the user clicks play.
