@@ -253,6 +253,25 @@
         .ch-note i { color: var(--dgcp-blue); margin-right: .35rem; }
         @media (max-width: 575.98px) { .ch-videogrid { grid-template-columns: 1fr; } }
 
+        /* ---------- Layout picker ---------- */
+        .ch-layouts { display: grid; gap: 1.1rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+        .ch-layout__head { display: flex; align-items: center; gap: .6rem; margin-bottom: .7rem; }
+        .ch-layout__dot { font-size: 1.45rem; line-height: 1; }
+        .ch-layout__head h3 { margin: 0; letter-spacing: .04em; }
+        .ch-layout__badge {
+            align-self: flex-start; font-size: .72rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: .08em;
+            padding: .25rem .7rem; border-radius: 999px;
+            background: var(--dgcp-blue-soft); color: var(--dgcp-blue); margin-bottom: 1rem;
+        }
+        .ch-layout__stats { list-style: none; padding: 0; margin: 0 0 1rem; display: grid; gap: .35rem; font-size: .93rem; }
+        .ch-layout__stats li {
+            display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
+            border-bottom: 1px dashed var(--dgcp-line); padding-bottom: .35rem;
+        }
+        .ch-layout__stats [data-lang] { color: var(--dgcp-muted); }
+        .ch-layout__stats strong { font-weight: 700; white-space: nowrap; }
+
         /* ---------- Partner logos ---------- */
         .ch-partners {
             display: grid; gap: 1.1rem;
@@ -316,14 +335,14 @@
                 </div>
                 <h1 class="ch-hero__title">DiscGolfPark<br>Běchovice</h1>
                 <p class="ch-hero__lead">
-                    <span data-lang="cs">Vítej na našem domácím hřišti. Tady najdeš všechno, co potřebuješ vědět před hrou — ať hraješ poprvé, nebo se sem jen občas vracíš.</span>
-                    <span data-lang="en">Welcome to our home course. Here's everything you need before you play — whether it's your first round or an occasional visit.</span>
+                    <span data-lang="cs">Vítej na našem domácím hřišti. Hraje se tu na tři různé délky, takže si kolo odehraje úplný začátečník i turnajový hráč. Tady najdeš všechno, co potřebuješ vědět před hrou.</span>
+                    <span data-lang="en">Welcome to our home course. It plays at three different lengths, so there's a round here for a complete beginner and a tournament player alike. Everything you need before you play is below.</span>
                 </p>
                 <div class="ch-chips">
-                    <span class="ch-chip"><i class="fas fa-flag"></i> 18 <span data-lang="cs">jamek</span><span data-lang="en">holes</span></span>
-                    <span class="ch-chip"><i class="fas fa-ruler-horizontal"></i> 2&nbsp;587 m · par 62</span>
+                    <span class="ch-chip"><i class="fas fa-flag"></i> 9 <span data-lang="cs">nebo</span><span data-lang="en">or</span> 18 <span data-lang="cs">jamek</span><span data-lang="en">holes</span></span>
+                    <span class="ch-chip"><i class="fas fa-layer-group"></i> 3 <span data-lang="cs">layouty · 994–2&nbsp;587 m</span><span data-lang="en">layouts · 994–2,587 m</span></span>
                     <span class="ch-chip"><i class="fas fa-coins"></i> <span data-lang="cs">Hraní zdarma</span><span data-lang="en">Free to play</span></span>
-                    <span class="ch-chip"><i class="fas fa-clock"></i> 2–3,5 <span data-lang="cs">hod.</span><span data-lang="en">hrs</span></span>
+                    <span class="ch-chip"><i class="fas fa-clock"></i> 1–3,5 <span data-lang="cs">hod.</span><span data-lang="en">hrs</span></span>
                     <span class="ch-chip"><i class="fas fa-trophy"></i> <span data-lang="cs">Dějiště MČR 2023</span><span data-lang="en">2023 Nat'l Champs venue</span></span>
                 </div>
                 <div class="ch-hero__cta">
@@ -339,6 +358,57 @@
             </div>
         </div>
     </header>
+
+    <!-- ===== Layout picker ===== -->
+    <section class="ch-section ch-section--tint" id="layouty">
+        <div class="container">
+            <div class="ch-section__head">
+                <span class="ch-eyebrow"><span data-lang="cs">Layouty</span><span data-lang="en">Layouts</span></span>
+                <h2 class="ch-h2"><span data-lang="cs">Vyber si délku podle sebe</span><span data-lang="en">Pick a length that suits you</span></h2>
+                <p class="ch-sub"><span data-lang="cs">Nemusíš hrát tu nejdelší verzi. Stejné hřiště se dá odehrát na tři různé délky — layout si vybereš v appce před startem kola.</span><span data-lang="en">You don't have to play the longest version. The same course can be played at three different lengths — pick your layout in the app before you start a round.</span></p>
+            </div>
+            <div class="ch-layouts">
+                <div class="ch-card">
+                    <div class="ch-layout__head"><span class="ch-layout__dot">🟢</span><h3>GREEN</h3></div>
+                    <span class="ch-layout__badge"><span data-lang="cs">Ideální první kolo</span><span data-lang="en">Best first round</span></span>
+                    <ul class="ch-layout__stats">
+                        <li><span data-lang="cs">Jamky</span><span data-lang="en">Holes</span><strong>9</strong></li>
+                        <li><span data-lang="cs">Par</span><span data-lang="en">Par</span><strong>31</strong></li>
+                        <li><span data-lang="cs">Délka</span><span data-lang="en">Length</span><strong>994 m</strong></li>
+                        <li><span data-lang="cs">Jamky dlouhé</span><span data-lang="en">Holes range</span><strong>59–199 m</strong></li>
+                    </ul>
+                    <p><span data-lang="cs">Devítka na rychlé kolo — zvládneš ji přibližně za hodinu. Nejkratší jamky na hřišti, takže se u ní dobře učí i někdo, kdo drží disk poprvé.</span><span data-lang="en">A nine for a quick round — about an hour. The shortest holes on the course, so it works even if you're holding a disc for the first time.</span></p>
+                </div>
+                <div class="ch-card">
+                    <div class="ch-layout__head"><span class="ch-layout__dot">⚪️</span><h3>WHITE</h3></div>
+                    <span class="ch-layout__badge"><span data-lang="cs">Naše doporučení</span><span data-lang="en">Our recommendation</span></span>
+                    <ul class="ch-layout__stats">
+                        <li><span data-lang="cs">Jamky</span><span data-lang="en">Holes</span><strong>18</strong></li>
+                        <li><span data-lang="cs">Par</span><span data-lang="en">Par</span><strong>61</strong></li>
+                        <li><span data-lang="cs">Délka</span><span data-lang="en">Length</span><strong>2&nbsp;072 m</strong></li>
+                        <li><span data-lang="cs">Jamky dlouhé</span><span data-lang="en">Holes range</span><strong>59–207 m</strong></li>
+                    </ul>
+                    <p><span data-lang="cs">Plné osmnáct jamek v rozumné délce. Pokud sem jdeš poprvé na celé kolo nebo hraješ rekreačně, začni tady.</span><span data-lang="en">The full eighteen at a sane length. If it's your first full round here, or you play recreationally, start here.</span></p>
+                </div>
+                <div class="ch-card">
+                    <div class="ch-layout__head"><span class="ch-layout__dot">🟡</span><h3>GOLD</h3></div>
+                    <span class="ch-layout__badge"><span data-lang="cs">Pro pokročilé</span><span data-lang="en">Advanced</span></span>
+                    <ul class="ch-layout__stats">
+                        <li><span data-lang="cs">Jamky</span><span data-lang="en">Holes</span><strong>18</strong></li>
+                        <li><span data-lang="cs">Par</span><span data-lang="en">Par</span><strong>62</strong></li>
+                        <li><span data-lang="cs">Délka</span><span data-lang="en">Length</span><strong>2&nbsp;587 m</strong></li>
+                        <li><span data-lang="cs">Jamky dlouhé</span><span data-lang="en">Holes range</span><strong>90–283 m</strong></li>
+                    </ul>
+                    <p><span data-lang="cs">Nejdelší a nejtechničtější varianta — na téhle se hrají turnaje. Dej si ji, až ti bude White krátký.</span><span data-lang="en">The longest, most technical version — this is what tournaments are played on. Save it for when White starts feeling short.</span></p>
+                </div>
+            </div>
+            <p class="ch-note">
+                <i class="fas fa-info-circle"></i>
+                <span data-lang="cs">Délky a pary jsou podle UDisc, kde layouty najdeš pod stejnými názvy.</span>
+                <span data-lang="en">Lengths and pars are per UDisc, where you'll find the layouts under the same names.</span>
+            </p>
+        </div>
+    </section>
 
     <!-- ===== Welcome / Club + signup ===== -->
     <section class="ch-section" id="klub">
@@ -437,11 +507,13 @@
     <!-- ===== First time here ===== -->
     <section class="ch-section" id="prvni-navsteva">
         <div class="container">
-            <div class="row align-items-start">
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <span class="ch-eyebrow"><span data-lang="cs">Poprvé na hřišti</span><span data-lang="en">First time here</span></span>
-                    <h2 class="ch-h2"><span data-lang="cs">Jak to tu funguje</span><span data-lang="en">How it works</span></h2>
-                    <p class="ch-sub mb-4"><span data-lang="cs">Discgolf je jednoduchý: hodíš disk od výhoziště (tee) a snažíš se na co nejméně hodů trefit koš. Pár věcí, které se hodí vědět:</span><span data-lang="en">Disc golf is simple: throw your disc from the tee and try to hit the basket in as few throws as possible. A few things worth knowing:</span></p>
+            <div class="ch-section__head">
+                <span class="ch-eyebrow"><span data-lang="cs">Poprvé na hřišti</span><span data-lang="en">First time here</span></span>
+                <h2 class="ch-h2"><span data-lang="cs">Jak to tu funguje</span><span data-lang="en">How it works</span></h2>
+                <p class="ch-sub"><span data-lang="cs">Discgolf je jednoduchý: hodíš disk od výhoziště (tee) a snažíš se na co nejméně hodů trefit koš. Pár věcí, které se hodí vědět:</span><span data-lang="en">Disc golf is simple: throw your disc from the tee and try to hit the basket in as few throws as possible. A few things worth knowing:</span></p>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2">
                     <ul class="ch-list">
                         <li><i class="fas fa-flag-checkered"></i><span><strong data-lang="cs">Start u jamky 1.</strong><strong data-lang="en">Start at hole 1.</strong> <span data-lang="cs">Jamky hraj popořadě podle čísel na cedulích u výhozišť.</span><span data-lang="en">Play holes in order, following the numbers on the tee signs.</span></span></li>
                         <li><i class="fas fa-walking"></i><span><strong data-lang="cs">Hraj odtud, kde disk dopadl.</strong><strong data-lang="en">Play from where the disc lands.</strong> <span data-lang="cs">Další hod provádíš z místa posledního dopadu (lie).</span><span data-lang="en">Your next throw is from where it last landed (the lie).</span></span></li>
@@ -449,18 +521,6 @@
                         <li><i class="fas fa-leaf"></i><span><strong data-lang="cs">Respektuj okolí.</strong><strong data-lang="en">Respect the surroundings.</strong> <span data-lang="cs">Neodhazuj odpadky, chovej se ohleduplně k přírodě i kolemjdoucím.</span><span data-lang="en">No littering; be considerate of nature and passers-by.</span></span></li>
                         <li><i class="fas fa-hand-paper"></i><span><strong data-lang="cs">Pusť rychlejší skupinu.</strong><strong data-lang="en">Let faster groups play through.</strong> <span data-lang="cs">Když vás dohání rychlejší flight, nech je projít.</span><span data-lang="en">If a faster group catches up, wave them through.</span></span></li>
                     </ul>
-                </div>
-                <div class="col-lg-6">
-                    <div class="ch-card">
-                        <div class="ch-card__icon"><i class="fas fa-question"></i></div>
-                        <h3><span data-lang="cs">Nemáš disk?</span><span data-lang="en">No disc?</span></h3>
-                        <p><span data-lang="cs">Pro start ti stačí jediný univerzální disk (midrange). Půjčit nebo koupit disky můžeš u našich partnerů, nebo dorazit na klubový trénink, kde ti rádi nějaký půjčíme a poradíme.</span><span data-lang="en">A single all-round disc (a midrange) is enough to start. You can buy or borrow discs from our partners, or come to a club practice where we'll happily lend you one and give tips.</span></p>
-                        <div class="ch-card__foot">
-                            <a class="ch-btn ch-btn--outline" href="../../index.html#treninky">
-                                <i class="fas fa-calendar"></i> <span data-lang="cs">Klubové tréninky</span><span data-lang="en">Club practices</span>
-                            </a>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
