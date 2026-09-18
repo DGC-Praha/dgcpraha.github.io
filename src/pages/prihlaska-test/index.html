@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="cs" class="lang-cs">
+
+<head>
+    <!-- Pick language before paint (CZ default, no-JS safe) to avoid a language flash -->
+    <script>
+        (function () {
+            var l;
+            try { l = localStorage.getItem('dgcp-lang'); } catch (e) {}
+            if (!l) { l = (navigator.language || '').toLowerCase().indexOf('cs') === 0 ? 'cs' : 'en'; }
+            l = (l === 'en') ? 'en' : 'cs';
+            var r = document.documentElement;
+            r.classList.remove('lang-cs', 'lang-en');
+            r.classList.add('lang-' + l);
+            r.lang = l;
+        })();
+    </script>
+
+@@include('partials/head.html', {"title": "Přihláška do klubu (test) – DGC Praha", "basePath": ".."})
+
+    <!--
+      A test page, deliberately not linked from anywhere. `noindex, nofollow` because an
+      unlinked page is not an unfindable one: a sitemap, a shared link or a referrer header
+      is enough for a crawler to arrive, and a duplicate membership form in search results
+      would collect real applications nobody was watching for.
+    -->
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#003d99">
+
+    <!--
+      Cloudflare Turnstile. `async defer` so a slow challenge script cannot hold up the
+      form rendering; the widget appears when it is ready.
+    -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+    <style>
+        :root {
+            --dgcp-blue: #003d99;
+            --dgcp-blue-dark: #002a6b;
+            --dgcp-blue-soft: #eaf0fb;
+            --dgcp-fairway: #2f8f4e;
+            --dgcp-ink: #1c2430;
+            --dgcp-muted: #5a6473;
+            --dgcp-line: #e6e9f0;
+            --dgcp-radius: 18px;
+            --dgcp-shadow: 0 10px 30px rgba(0, 61, 153, .08);
+        }
+
+        body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--dgcp-ink);
+            background: #f6f8fc;
+        }
+
+        /* show only the active language (lang-* class lives on <html>) */
+        [data-lang] { display: none; }
+        .lang-cs [data-lang="cs"],
+        .lang-en [data-lang="en"] { display: inline; }
+
+        .jf-topbar {
+            background: var(--dgcp-blue);
+            box-shadow: 0 2px 18px rgba(0, 0, 0, .18);
+        }
+        .jf-topbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            height: 64px;
+        }
+        .jf-topbar a { color: #fff; font-weight: 700; text-decoration: none; letter-spacing: .02em; }
+
+        .jf-langtoggle { display: flex; gap: .25rem; }
+        .jf-langtoggle button {
+            background: rgba(255, 255, 255, .12);
+            color: #fff;
+            border: 0;
+            border-radius: 999px;
+            padding: .25rem .7rem;
+            font-size: .8rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .jf-langtoggle button.is-active { background: #fff; color: var(--dgcp-blue); }
+
+        .jf-wrap { max-width: 720px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+        .jf-card {
+            background: #fff;
+            border: 1px solid var(--dgcp-line);
+            border-radius: var(--dgcp-radius);
+            box-shadow: var(--dgcp-shadow);
+            padding: 1.75rem;
+        }
+
+        .jf-title { font-weight: 700; margin: 0 0 .35rem; }
+        .jf-lede { color: var(--dgcp-muted); font-size: .95rem; margin-bottom: 1.5rem; }
+
+        .jf-testbanner {
+            background: #fff4d6;
+            border: 1px solid #f0d089;
+            border-radius: 12px;
+            padding: .75rem 1rem;
+            font-size: .85rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .jf-group { margin-bottom: 1.15rem; }
+        .jf-group label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: .3rem; }
+        .jf-group .jf-hint { display: block; font-size: .78rem; color: var(--dgcp-muted); margin-top: .25rem; }
+        .jf-req { color: #c0392b; }
+
+        .jf-group input,
+        .jf-group select,
+        .jf-group textarea {
+            width: 100%;
+            border: 1px solid var(--dgcp-line);
+            border-radius: 10px;
+            padding: .55rem .7rem;
+            font-size: .95rem;
+            font-family: inherit;
+            color: var(--dgcp-ink);
+            background: #fff;
+        }
+        .jf-group input:focus,
+        .jf-group select:focus,
+        .jf-group textarea:focus {
+            outline: 0;
+            border-color: var(--dgcp-blue);
+            box-shadow: 0 0 0 3px var(--dgcp-blue-soft);
+        }
+        .jf-group textarea { min-height: 74px; resize: vertical; }
+
+        .jf-section {
+            font-size: .78rem;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--dgcp-muted);
+            border-top: 1px solid var(--dgcp-line);
+            padding-top: 1.35rem;
+            margin: 1.85rem 0 1.15rem;
+        }
+
+        .jf-submit {
+            background: var(--dgcp-blue);
+            color: #fff;
+            border: 0;
+            border-radius: 999px;
+            padding: .7rem 1.8rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .jf-submit:hover:not(:disabled) { background: var(--dgcp-blue-dark); }
+        .jf-submit:disabled { opacity: .55; cursor: default; }
+
+        .jf-alert { border-radius: 12px; padding: .85rem 1rem; font-size: .9rem; margin-bottom: 1.25rem; }
+        .jf-alert--error { background: #fdecea; border: 1px solid #f5c6c2; color: #8e2f26; }
+        .jf-alert--ok { background: #eaf7ee; border: 1px solid #b7e0c4; color: #1e6b36; }
+        .jf-alert code { font-size: .82rem; color: inherit; }
+
+        .jf-done { text-align: center; padding: 1rem 0; }
+        .jf-done__tick { font-size: 2.5rem; color: var(--dgcp-fairway); }
+
+        .jf-privacy { font-size: .78rem; color: var(--dgcp-muted); margin-top: 1.25rem; }
+    </style>
+</head>
+
+<body>
+    <div class="jf-topbar">
+        <div class="container">
+            <a href="https://dgcp.cz/">DGC Praha</a>
+            <div class="jf-langtoggle" role="group" aria-label="Language / Jazyk">
+                <button type="button" data-setlang="cs" class="is-active" aria-label="Česky">CZ</button>
+                <button type="button" data-setlang="en" aria-label="English">EN</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="jf-wrap">
+        <div class="jf-card">
+            <div class="jf-testbanner">
+                <strong data-lang="cs">Testovací stránka.</strong>
+                <strong data-lang="en">Test page.</strong>
+                <span data-lang="cs">Zkoušíme napojení přihlášky na členský portál. Cokoliv tady odešleš
+                    skončí v administraci jako opravdová žádost — tak posílej jen testovací údaje.</span>
+                <span data-lang="en">We are testing the membership form's connection to the members
+                    portal. Anything submitted here lands in the admin list as a real application, so
+                    please use test data only.</span>
+            </div>
+
+            <h1 class="jf-title">
+                <span data-lang="cs">Přihláška do klubu</span>
+                <span data-lang="en">Club membership application</span>
+            </h1>
+            <p class="jf-lede">
+                <span data-lang="cs">Vyplň prosím přihlášku a my se ti co nejdřív ozveme.
+                    Hvězdičkou označené otázky potřebujeme, zbytek je dobrovolný.</span>
+                <span data-lang="en">Fill this in and we will get back to you shortly. The starred
+                    questions are the ones we need; the rest is optional.</span>
+            </p>
+
+            <div id="jf-error" class="jf-alert jf-alert--error" style="display:none" role="alert"></div>
+
+            <form id="jf-form" novalidate>
+                <!-- ===== The seven the API will not record an application without ===== -->
+                <div class="jf-group">
+                    <label for="firstName"><span data-lang="cs">Jméno</span><span data-lang="en">First name</span> <span class="jf-req">*</span></label>
+                    <input id="firstName" name="firstName" type="text" maxlength="100" autocomplete="given-name" required>
+                </div>
+
+                <div class="jf-group">
+                    <label for="lastName"><span data-lang="cs">Příjmení</span><span data-lang="en">Surname</span> <span class="jf-req">*</span></label>
+                    <input id="lastName" name="lastName" type="text" maxlength="100" autocomplete="family-name" required>
+                </div>
+
+                <div class="jf-group">
+                    <label for="email">E-mail <span class="jf-req">*</span></label>
+                    <input id="email" name="email" type="email" maxlength="255" autocomplete="email" required>
+                    <span class="jf-hint">
+                        <span data-lang="cs">Na tuhle adresu ti odpovíme.</span>
+                        <span data-lang="en">This is where we will reply.</span>
+                    </span>
+                </div>
+
+                <div class="jf-group">
+                    <label for="phone"><span data-lang="cs">Telefon</span><span data-lang="en">Phone</span> <span class="jf-req">*</span></label>
+                    <input id="phone" name="phone" type="tel" maxlength="32" autocomplete="tel" required>
+                </div>
+
+                <div class="jf-group">
+                    <label for="dateOfBirth"><span data-lang="cs">Datum narození</span><span data-lang="en">Date of birth</span> <span class="jf-req">*</span></label>
+                    <!--
+                      A real date input, for the same two reasons the Google Form uses a date
+                      question: people write "17. 9. 1994", and a picker cannot produce
+                      30 February — which a mandatory field must never be asked with, because
+                      the API refuses it and the refusal loses the application.
+                    -->
+                    <input id="dateOfBirth" name="dateOfBirth" type="date" min="1920-01-01" autocomplete="bday" required>
+                </div>
+
+                <div class="jf-group">
+                    <label for="address"><span data-lang="cs">Adresa</span><span data-lang="en">Address</span> <span class="jf-req">*</span></label>
+                    <textarea id="address" name="address" maxlength="500" autocomplete="street-address" required></textarea>
+                </div>
+
+                <div class="jf-group">
+                    <label for="identificationNumber"><span data-lang="cs">Rodné číslo</span><span data-lang="en">Birth number</span> <span class="jf-req">*</span></label>
+                    <input id="identificationNumber" name="identificationNumber" type="text" maxlength="32" required>
+                    <span class="jf-hint">
+                        <span data-lang="cs">Potřebujeme ho pro přihlášku do České asociace discgolfu.</span>
+                        <span data-lang="en">Required for your registration with the Czech Disc Golf Association.</span>
+                    </span>
+                </div>
+
+                <!-- ===== Everything below is the club's own question and travels in `answers` ===== -->
+                <div class="jf-section">
+                    <span data-lang="cs">Ještě něco o tobě</span>
+                    <span data-lang="en">A little more about you</span>
+                </div>
+
+                <div class="jf-group">
+                    <label for="q-sex"><span data-lang="cs">Pohlaví</span><span data-lang="en">Gender</span></label>
+                    <select id="q-sex" data-question-cs="Pohlaví" data-question-en="Gender">
+                        <option value=""></option>
+                        <option value="Muž">Muž / Male</option>
+                        <option value="Žena">Žena / Female</option>
+                    </select>
+                </div>
+
+                <div class="jf-group">
+                    <label for="q-pdga"><span data-lang="cs">PDGA číslo</span><span data-lang="en">PDGA number</span></label>
+                    <input id="q-pdga" type="text" maxlength="60" data-question-cs="PDGA číslo" data-question-en="PDGA number">
+                    <span class="jf-hint">
+                        <span data-lang="cs">Pokud máš PDGA registraci.</span>
+                        <span data-lang="en">If you have a PDGA membership.</span>
+                    </span>
+                </div>
+
+                <div class="jf-group">
+                    <label for="q-idg">iDiscGolf ID</label>
+                    <input id="q-idg" type="text" maxlength="60" data-question-cs="iDiscGolf ID" data-question-en="iDiscGolf ID">
+                    <span class="jf-hint">
+                        <span data-lang="cs">Tvoje ID na ceskydiscgolf.cz, pokud tam už účet máš.</span>
+                        <span data-lang="en">Your ID on ceskydiscgolf.cz, if you already have an account.</span>
+                    </span>
+                </div>
+
+                <div class="jf-group">
+                    <label for="q-source"><span data-lang="cs">Odkud jsi o nás slyšel?</span><span data-lang="en">How did you hear about us?</span></label>
+                    <input id="q-source" type="text" maxlength="200" data-question-cs="Odkud jsi o nás slyšel?" data-question-en="How did you hear about us?">
+                </div>
+
+                <div class="jf-group">
+                    <label for="q-note"><span data-lang="cs">Chceš nám něco dodat?</span><span data-lang="en">Anything else you would like to add?</span></label>
+                    <textarea id="q-note" maxlength="2000" data-question-cs="Chceš nám něco dodat?" data-question-en="Anything else you would like to add?"></textarea>
+                </div>
+
+                <!--
+                  The widget. `data-sitekey` is public by design and is *meant* to be readable
+                  here; what makes it safe is that the members API checks which hostname
+                  Cloudflare says the challenge was solved on, so a copy of this key on
+                  somebody else's page produces a token this club's intake refuses.
+                -->
+                <div class="jf-group" style="margin-top:1.5rem">
+                    <div id="jf-turnstile" class="cf-turnstile" data-sitekey="1x00000000000000000000AA" data-theme="light"></div>
+                </div>
+
+                <button type="submit" class="jf-submit" id="jf-submit">
+                    <span data-lang="cs">Odeslat přihlášku</span>
+                    <span data-lang="en">Send application</span>
+                </button>
+
+                <p class="jf-privacy">
+                    <span data-lang="cs">Údaje použijeme jen pro členství v klubu a pro přihlášku do
+                        České asociace discgolfu. Rodné číslo nikam dál nepředáváme.</span>
+                    <span data-lang="en">We use these details only for your club membership and your
+                        registration with the Czech Disc Golf Association. The birth number is not
+                        passed on anywhere else.</span>
+                </p>
+            </form>
+
+            <div id="jf-done" class="jf-done" style="display:none">
+                <div class="jf-done__tick">✓</div>
+                <h2 class="jf-title">
+                    <span data-lang="cs">Máme to, díky!</span>
+                    <span data-lang="en">Got it, thanks!</span>
+                </h2>
+                <p class="jf-lede">
+                    <span data-lang="cs">Přihlášku jsme uložili a někdo z klubu se ti co nejdřív ozve
+                        na e-mail.</span>
+                    <span data-lang="en">Your application is saved and somebody from the club will
+                        e-mail you shortly.</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ---------- language toggle (same behaviour as the course hub) ---------- */
+        (function () {
+            var root = document.documentElement;
+            var buttons = document.querySelectorAll('[data-setlang]');
+            function syncButtons(lang) {
+                buttons.forEach(function (b) {
+                    b.classList.toggle('is-active', b.getAttribute('data-setlang') === lang);
+                });
+            }
+            function setLang(lang) {
+                lang = (lang === 'en') ? 'en' : 'cs';
+                root.classList.remove('lang-cs', 'lang-en');
+                root.classList.add('lang-' + lang);
+                root.lang = lang;
+                syncButtons(lang);
+                try { localStorage.setItem('dgcp-lang', lang); } catch (e) {}
+            }
+            syncButtons(root.classList.contains('lang-en') ? 'en' : 'cs');
+            buttons.forEach(function (b) {
+                b.addEventListener('click', function () { setLang(b.getAttribute('data-setlang')); });
+            });
+        })();
+
+        /* ---------- the form ---------- */
+        (function () {
+            /*
+              Hard-coded, and deliberately not overridable from the query string. A `?api=`
+              parameter would let anybody send a crafted link that posts somebody's birth
+              number to a server of their choosing — on a page whose whole purpose is
+              collecting one. The localhost branch is the only exception and cannot be
+              reached from dgcp.cz.
+            */
+            var PROD_API = 'https://api-members-dgcp.dominikvoda.com/api/public/clubs/15/membership-request';
+            var LOCAL_API = 'http://localhost:8090/api/public/clubs/15/membership-request';
+            var isLocal = ['localhost', '127.0.0.1', '0.0.0.0'].indexOf(location.hostname) !== -1;
+            var API = isLocal ? LOCAL_API : PROD_API;
+
+            var form = document.getElementById('jf-form');
+            var submit = document.getElementById('jf-submit');
+            var errorBox = document.getElementById('jf-error');
+            var doneBox = document.getElementById('jf-done');
+
+            function lang() {
+                return document.documentElement.classList.contains('lang-en') ? 'en' : 'cs';
+            }
+
+            /* Both languages, so a message never arrives in the wrong one. */
+            var MESSAGES = {
+                captchaFailed: {
+                    cs: 'Ověření, že nejsi robot, se nepovedlo. Zkus to prosím ještě jednou.',
+                    en: 'The are-you-a-robot check did not pass. Please try once more.'
+                },
+                verificationUnavailable: {
+                    cs: 'Ověření teď není dostupné. Zkus to prosím za chvíli.',
+                    en: 'Verification is unavailable right now. Please try again shortly.'
+                },
+                originNotAllowed: {
+                    cs: 'Formulář není správně nastavený. Dej prosím vědět klubu.',
+                    en: 'This form is not set up correctly. Please let the club know.'
+                },
+                notConfigured: {
+                    cs: 'Formulář není správně nastavený. Dej prosím vědět klubu.',
+                    en: 'This form is not set up correctly. Please let the club know.'
+                },
+                notAvailable: {
+                    cs: 'Klub zrovna nepřijímá přihlášky z webu. Napiš nám prosím e-mailem.',
+                    en: 'The club is not taking web applications right now. Please e-mail us instead.'
+                },
+                rateLimited: {
+                    cs: 'Přihlášek přišlo příliš mnoho. Zkus to prosím za chvíli.',
+                    en: 'Too many applications just arrived. Please try again shortly.'
+                },
+                network: {
+                    cs: 'Přihlášku se nepodařilo odeslat — zkontroluj připojení a zkus to znovu.',
+                    en: 'The application could not be sent — check your connection and try again.'
+                },
+                unknown: {
+                    cs: 'Přihlášku se nepodařilo uložit. Zkus to prosím znovu.',
+                    en: 'The application could not be saved. Please try again.'
+                }
+            };
+
+            function showError(html) {
+                errorBox.innerHTML = html;
+                errorBox.style.display = '';
+                errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            function hideError() {
+                errorBox.style.display = 'none';
+            }
+
+            function messageFor(code) {
+                return (MESSAGES[code] || MESSAGES.unknown)[lang()];
+            }
+
+            /*
+              The club's own questions, in the order they are asked, which is the order the
+              portal shows them back in. Skipped ones are simply absent rather than sent
+              empty — "they left it blank" is not an answer worth storing.
+
+              **Always the Czech label, whatever language the form is showing.** The
+              applicant reads their own language; what gets stored is the club's one
+              canonical wording, because the person reading it in the portal is a Czech
+              admin and the same question arriving as "Gender" from one applicant and
+              "Pohlaví" from the next reads as two different questions. It also matches
+              what the Apps Script sends, so the Google Form and this page produce
+              comparable rows. The `data-question-en` attributes exist for the visible
+              label only.
+            */
+            function collectAnswers() {
+                var answers = [];
+                form.querySelectorAll('[data-question-cs]').forEach(function (field) {
+                    var value = (field.value || '').trim();
+                    if (value === '') return;
+                    answers.push({
+                        question: field.getAttribute('data-question-cs'),
+                        answer: value
+                    });
+                });
+                return answers;
+            }
+
+            function token() {
+                var field = form.querySelector('[name="cf-turnstile-response"]');
+                return field ? field.value : '';
+            }
+
+            /*
+              A token may be validated once and expires after five minutes, so every failed
+              attempt needs a fresh challenge. Without this, a second press of the button
+              reliably fails with `timeout-or-duplicate` and reads as "the form is broken".
+            */
+            function resetChallenge() {
+                if (window.turnstile) {
+                    try { window.turnstile.reset(); } catch (e) {}
+                }
+            }
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                hideError();
+
+                /*
+                  The browser's own validation first, so the seven required fields never
+                  travel as far as the API: its refusal is final and unretried, and being
+                  told "`identificationNumber` is required" in English is no use to somebody
+                  filling in a Czech form.
+                */
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                if (token() === '') {
+                    showError(messageFor('captchaFailed'));
+                    return;
+                }
+
+                var payload = {
+                    firstName: document.getElementById('firstName').value.trim(),
+                    lastName: document.getElementById('lastName').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    /* A date input already yields YYYY-MM-DD, which is what the API wants. */
+                    dateOfBirth: document.getElementById('dateOfBirth').value,
+                    address: document.getElementById('address').value.trim(),
+                    identificationNumber: document.getElementById('identificationNumber').value.trim(),
+                    turnstileToken: token()
+                };
+
+                var answers = collectAnswers();
+                if (answers.length > 0) payload.answers = answers;
+
+                submit.disabled = true;
+
+                fetch(API, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                }).then(function (response) {
+                    return response.json().catch(function () { return {}; }).then(function (body) {
+                        return { status: response.status, body: body };
+                    });
+                }).then(function (result) {
+                    if (result.status === 201) {
+                        form.style.display = 'none';
+                        doneBox.style.display = '';
+                        doneBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return;
+                    }
+
+                    submit.disabled = false;
+                    resetChallenge();
+
+                    /*
+                      `invalidField` means the form and the API disagree about the contract,
+                      which is this page's bug and not the applicant's. The API's own message
+                      names the field, and on a test page that is exactly what wants showing.
+                    */
+                    if (result.body && result.body.code === 'invalidField') {
+                        showError('<strong>' + (lang() === 'cs' ? 'Chyba formuláře' : 'Form error') +
+                            ':</strong> <code>' + String(result.body.error || '').replace(/[<>&]/g, '') + '</code>');
+                        return;
+                    }
+
+                    showError(messageFor(result.body && result.body.code));
+                }).catch(function () {
+                    submit.disabled = false;
+                    resetChallenge();
+                    showError(messageFor('network'));
+                });
+            });
+        })();
+    </script>
+</body>
+
+</html>
