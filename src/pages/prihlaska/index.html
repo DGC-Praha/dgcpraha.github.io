@@ -16,15 +16,9 @@
         })();
     </script>
 
-@@include('partials/head.html', {"title": "Přihláška do klubu (test) – DGC Praha", "basePath": ".."})
+@@include('partials/head.html', {"title": "Přihláška do klubu – DGC Praha", "basePath": ".."})
 
-    <!--
-      A test page, deliberately not linked from anywhere. `noindex, nofollow` because an
-      unlinked page is not an unfindable one: a sitemap, a shared link or a referrer header
-      is enough for a crawler to arrive, and a duplicate membership form in search results
-      would collect real applications nobody was watching for.
-    -->
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="Přihláška do Discgolf clubu Praha — vyplň ji online a ozveme se ti na e-mail.">
     <meta name="theme-color" content="#003d99">
 
     <!--
@@ -95,15 +89,6 @@
 
         .jf-title { font-weight: 700; margin: 0 0 .35rem; }
         .jf-lede { color: var(--dgcp-muted); font-size: .95rem; margin-bottom: 1.5rem; }
-
-        .jf-testbanner {
-            background: #fff4d6;
-            border: 1px solid #f0d089;
-            border-radius: 12px;
-            padding: .75rem 1rem;
-            font-size: .85rem;
-            margin-bottom: 1.5rem;
-        }
 
         .jf-group { margin-bottom: 1.15rem; }
         .jf-group label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: .3rem; }
@@ -179,16 +164,6 @@
 
     <div class="jf-wrap">
         <div class="jf-card">
-            <div class="jf-testbanner">
-                <strong data-lang="cs">Testovací stránka.</strong>
-                <strong data-lang="en">Test page.</strong>
-                <span data-lang="cs">Zkoušíme napojení přihlášky na členský portál. Cokoliv tady odešleš
-                    skončí v administraci jako opravdová žádost — tak posílej jen testovací údaje.</span>
-                <span data-lang="en">We are testing the membership form's connection to the members
-                    portal. Anything submitted here lands in the admin list as a real application, so
-                    please use test data only.</span>
-            </div>
-
             <h1 class="jf-title">
                 <span data-lang="cs">Přihláška do klubu</span>
                 <span data-lang="en">Club membership application</span>
@@ -533,13 +508,15 @@
                     resetChallenge();
 
                     /*
-                      `invalidField` means the form and the API disagree about the contract,
-                      which is this page's bug and not the applicant's. The API's own message
-                      names the field, and on a test page that is exactly what wants showing.
+                      `invalidField` means this page and the API disagree about the contract,
+                      which is the club's bug and not the applicant's. They get the same "tell
+                      the club" message as any other misconfiguration — the API's wording names
+                      a JSON field in English, which helps nobody filling in a Czech form — and
+                      the detail goes to the console, where whoever is asked to look will find it.
                     */
                     if (result.body && result.body.code === 'invalidField') {
-                        showError('<strong>' + (lang() === 'cs' ? 'Chyba formuláře' : 'Form error') +
-                            ':</strong> <code>' + String(result.body.error || '').replace(/[<>&]/g, '') + '</code>');
+                        console.error('Membership form rejected by the API:', result.body.error);
+                        showError(messageFor('notConfigured'));
                         return;
                     }
 
