@@ -40,44 +40,34 @@
             --dgcp-shadow: 0 10px 30px rgba(0, 61, 153, .08);
         }
 
-        body {
-            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            color: var(--dgcp-ink);
-            background: #f6f8fc;
-        }
+        /* The page chrome is the site's own (nav, footer, agency.min.css); only the
+           form itself is styled here. */
+        #prihlaska { background: #f6f8fc; }
 
         /* show only the active language (lang-* class lives on <html>) */
         [data-lang] { display: none; }
         .lang-cs [data-lang="cs"],
         .lang-en [data-lang="en"] { display: inline; }
 
-        .jf-topbar {
-            background: var(--dgcp-blue);
-            box-shadow: 0 2px 18px rgba(0, 0, 0, .18);
-        }
-        .jf-topbar .container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: .75rem;
-            height: 64px;
-        }
-        .jf-topbar a { color: #fff; font-weight: 700; text-decoration: none; letter-spacing: .02em; }
-
-        .jf-langtoggle { display: flex; gap: .25rem; }
+        /* The site nav carries no language switch, so this one lives on the card. */
+        .jf-langtoggle { display: flex; gap: .25rem; justify-content: flex-end; margin-bottom: .5rem; }
         .jf-langtoggle button {
-            background: rgba(255, 255, 255, .12);
-            color: #fff;
-            border: 0;
+            background: transparent;
+            color: var(--dgcp-muted);
+            border: 1px solid var(--dgcp-line);
             border-radius: 999px;
-            padding: .25rem .7rem;
-            font-size: .8rem;
+            padding: .2rem .7rem;
+            font-size: .78rem;
             font-weight: 700;
             cursor: pointer;
         }
-        .jf-langtoggle button.is-active { background: #fff; color: var(--dgcp-blue); }
+        .jf-langtoggle button.is-active {
+            background: var(--dgcp-blue);
+            border-color: var(--dgcp-blue);
+            color: #fff;
+        }
 
-        .jf-wrap { max-width: 720px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+        .jf-wrap { max-width: 720px; margin: 0 auto; }
 
         .jf-card {
             background: #fff;
@@ -87,7 +77,7 @@
             padding: 1.75rem;
         }
 
-        .jf-title { font-weight: 700; margin: 0 0 .35rem; }
+        .jf-title { font-weight: 700; font-size: 1.35rem; margin: 0 0 .35rem; }
         .jf-lede { color: var(--dgcp-muted); font-size: .95rem; margin-bottom: 1.5rem; }
 
         .jf-group { margin-bottom: 1.15rem; }
@@ -151,23 +141,27 @@
     </style>
 </head>
 
-<body>
-    <div class="jf-topbar">
+<body id="page-top">
+
+@@include('partials/nav.html', {"basePath": ".."})
+
+    <section class="page-section" id="prihlaska">
         <div class="container">
-            <a href="https://dgcp.cz/">DGC Praha</a>
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading text-uppercase">
+                        <span data-lang="cs">Přihláška do klubu</span>
+                        <span data-lang="en">Club membership application</span>
+                    </h2>
+                </div>
+            </div>
+
+            <div class="jf-wrap">
             <div class="jf-langtoggle" role="group" aria-label="Language / Jazyk">
                 <button type="button" data-setlang="cs" class="is-active" aria-label="Česky">CZ</button>
                 <button type="button" data-setlang="en" aria-label="English">EN</button>
             </div>
-        </div>
-    </div>
-
-    <div class="jf-wrap">
         <div class="jf-card">
-            <h1 class="jf-title">
-                <span data-lang="cs">Přihláška do klubu</span>
-                <span data-lang="en">Club membership application</span>
-            </h1>
             <p class="jf-lede">
                 <span data-lang="cs">Vyplň prosím přihlášku a my se ti co nejdřív ozveme.
                     Hvězdičkou označené otázky potřebujeme, zbytek je dobrovolný.</span>
@@ -192,10 +186,6 @@
                 <div class="jf-group">
                     <label for="email">E-mail <span class="jf-req">*</span></label>
                     <input id="email" name="email" type="email" maxlength="255" autocomplete="email" required>
-                    <span class="jf-hint">
-                        <span data-lang="cs">Na tuhle adresu ti odpovíme.</span>
-                        <span data-lang="en">This is where we will reply.</span>
-                    </span>
                 </div>
 
                 <div class="jf-group">
@@ -229,46 +219,81 @@
                 </div>
 
                 <!-- ===== Everything below is the club's own question and travels in `answers` ===== -->
+
+                <!--
+                  These two are what the club cannot raise a fee demand without. An admin
+                  working an application fills exactly these into the portal's fee dialog —
+                  the tier and the three ČADG facts — so asking here saves a round of e-mail.
+
+                  Amounts are written out rather than fetched: the price list lives in the
+                  members API (`membership_fee_schedules`, `membership_tiers`), but so does the
+                  table on the homepage, and the two are edited together once a year. If a
+                  figure here looks wrong, that table and that schedule are what to check.
+                  The tier is deliberately *named*, not identified: tiers are rows per
+                  (club, season) and an applicant does not know which season they will be
+                  billed for, so the admin picks the row when the demand is raised.
+                -->
                 <div class="jf-section">
-                    <span data-lang="cs">Ještě něco o tobě</span>
-                    <span data-lang="en">A little more about you</span>
+                    <span data-lang="cs">Členství a příspěvek</span>
+                    <span data-lang="en">Membership and the fee</span>
                 </div>
 
                 <div class="jf-group">
-                    <label for="q-sex"><span data-lang="cs">Pohlaví</span><span data-lang="en">Gender</span></label>
-                    <select id="q-sex" data-question-cs="Pohlaví" data-question-en="Gender">
+                    <label for="q-level"><span data-lang="cs">Úroveň členství</span><span data-lang="en">Membership level</span> <span class="jf-req">*</span></label>
+                    <select id="q-level" required data-question-cs="Úroveň členství" data-question-en="Membership level">
                         <option value=""></option>
-                        <option value="Muž">Muž / Male</option>
-                        <option value="Žena">Žena / Female</option>
+                        <option value="Základní členství">Základní členství / Basic — 400 Kč</option>
+                        <option value="Podpora klubu">Podpora klubu / Club supporter — 1500 Kč</option>
                     </select>
-                </div>
-
-                <div class="jf-group">
-                    <label for="q-pdga"><span data-lang="cs">PDGA číslo</span><span data-lang="en">PDGA number</span></label>
-                    <input id="q-pdga" type="text" maxlength="60" data-question-cs="PDGA číslo" data-question-en="PDGA number">
                     <span class="jf-hint">
-                        <span data-lang="cs">Pokud máš PDGA registraci.</span>
-                        <span data-lang="en">If you have a PDGA membership.</span>
+                        <span data-lang="cs">Junioři platí méně — přesnou částku ti potvrdíme
+                            v odpovědi.</span>
+                        <span data-lang="en">Juniors pay less — we will confirm the exact amount
+                            when we reply.</span>
                     </span>
                 </div>
 
                 <div class="jf-group">
-                    <label for="q-idg">iDiscGolf ID</label>
-                    <input id="q-idg" type="text" maxlength="60" data-question-cs="iDiscGolf ID" data-question-en="iDiscGolf ID">
+                    <label for="q-cadg"><span data-lang="cs">Členství v ČADG</span><span data-lang="en">ČADG membership</span> <span class="jf-req">*</span></label>
+                    <select id="q-cadg" required data-question-cs="Členství v ČADG" data-question-en="ČADG membership">
+                        <option value=""></option>
+                        <option value="Jsem už členem ČADG">Jsem už členem ČADG / I am already a member</option>
+                        <option value="Chci, aby klub zaplatil i moje členství v ČADG — registruji se poprvé (300 Kč)">Zařiďte mi ho — poprvé / Arrange it for me — first time (300 Kč)</option>
+                        <option value="Chci, aby klub zaplatil i moje členství v ČADG — už jsem byl registrovaný (600 Kč)">Zařiďte mi ho — už jsem byl registrovaný / Arrange it — registered before (600 Kč)</option>
+                        <option value="Členství v ČADG teď nechci">Teď o něj nemám zájem / Not right now</option>
+                    </select>
                     <span class="jf-hint">
-                        <span data-lang="cs">Tvoje ID na ceskydiscgolf.cz, pokud tam už účet máš.</span>
-                        <span data-lang="en">Your ID on ceskydiscgolf.cz, if you already have an account.</span>
+                        <span data-lang="cs">Česká asociace discgolfu — členství ti klub může zařídit
+                            spolu s příspěvkem. Junioři platí méně. Víc
+                            <a href="https://cadg.cz/prihlaska-do-asociace/" target="_blank" rel="noopener">na cadg.cz</a>.</span>
+                        <span data-lang="en">The Czech Disc Golf Association — the club can arrange
+                            your membership together with the club fee. Juniors pay less. More
+                            <a href="https://cadg.cz/prihlaska-do-asociace/" target="_blank" rel="noopener">at cadg.cz</a>.</span>
                     </span>
                 </div>
 
+                <!--
+                  Deliberately the only optional question. It is also the most useful one:
+                  the profile identifies the player on ceskydiscgolf.cz, which is where
+                  tagovacka reads tournaments and ratings from, so it is what lets an admin
+                  link the new member to the right account. `type="text"`, not `type="url"`
+                  — people paste "ceskydiscgolf.cz/…" without a scheme, and the form's own
+                  validity check would then refuse the whole application over it.
+                -->
                 <div class="jf-group">
-                    <label for="q-source"><span data-lang="cs">Odkud jsi o nás slyšel?</span><span data-lang="en">How did you hear about us?</span></label>
-                    <input id="q-source" type="text" maxlength="200" data-question-cs="Odkud jsi o nás slyšel?" data-question-en="How did you hear about us?">
-                </div>
-
-                <div class="jf-group">
-                    <label for="q-note"><span data-lang="cs">Chceš nám něco dodat?</span><span data-lang="en">Anything else you would like to add?</span></label>
-                    <textarea id="q-note" maxlength="2000" data-question-cs="Chceš nám něco dodat?" data-question-en="Anything else you would like to add?"></textarea>
+                    <label for="q-idg-profile">
+                        <span data-lang="cs">Odkaz na tvůj profil na ceskydiscgolf.cz</span>
+                        <span data-lang="en">Link to your ceskydiscgolf.cz profile</span>
+                    </label>
+                    <input id="q-idg-profile" type="text" inputmode="url" maxlength="300"
+                        data-question-cs="Odkaz na profil na ceskydiscgolf.cz"
+                        data-question-en="Link to the ceskydiscgolf.cz profile">
+                    <span class="jf-hint">
+                        <span data-lang="cs">Pokud tam už účet máš, zkopíruj sem adresu svého
+                            profilu.</span>
+                        <span data-lang="en">If you already have an account there, paste the
+                            address of your profile.</span>
+                    </span>
                 </div>
 
                 <!--
@@ -303,13 +328,20 @@
                 </h2>
                 <p class="jf-lede">
                     <span data-lang="cs">Přihlášku jsme uložili a někdo z klubu se ti co nejdřív ozve
-                        na e-mail.</span>
+                        na e-mail. Zatím nic neplať — přesnou částku, číslo účtu a variabilní symbol
+                        ti pošleme, až tě přijmeme.</span>
                     <span data-lang="en">Your application is saved and somebody from the club will
-                        e-mail you shortly.</span>
+                        e-mail you shortly. Do not pay anything yet — we will send you the exact
+                        amount, the account and the variable symbol once you are accepted.</span>
                 </p>
             </div>
         </div>
-    </div>
+            </div>
+        </div>
+    </section>
+
+@@include('partials/footer.html')
+@@include('partials/scripts.html', {"basePath": ".."})
 
     <script>
         /* ---------- language toggle (same behaviour as the course hub) ---------- */
