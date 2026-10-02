@@ -276,18 +276,17 @@
                   Deliberately the only optional question. It is also the most useful one:
                   the profile identifies the player on ceskydiscgolf.cz, which is where
                   tagovacka reads tournaments and ratings from, so it is what lets an admin
-                  link the new member to the right account. `type="text"`, not `type="url"`
-                  — people paste "ceskydiscgolf.cz/…" without a scheme, and the form's own
-                  validity check would then refuse the whole application over it.
+                  link the new member to the right account. Sent as `idgProfileUrl`, which the
+                  API refuses unless it is a profile link or the bare id, so `checkProfileLink()`
+                  holds the form back with a readable message first. `type="text"`, not
+                  `type="url"`: people paste "ceskydiscgolf.cz/…" without a scheme.
                 -->
                 <div class="jf-group">
                     <label for="q-idg-profile">
                         <span data-lang="cs">Odkaz na tvůj profil na ceskydiscgolf.cz</span>
                         <span data-lang="en">Link to your ceskydiscgolf.cz profile</span>
                     </label>
-                    <input id="q-idg-profile" type="text" inputmode="url" maxlength="300"
-                        data-question-cs="Odkaz na profil na ceskydiscgolf.cz"
-                        data-question-en="Link to the ceskydiscgolf.cz profile">
+                    <input id="q-idg-profile" name="idgProfileUrl" type="text" inputmode="url" maxlength="300">
                     <span class="jf-hint">
                         <span data-lang="cs">Pokud tam už účet máš, zkopíruj sem adresu svého
                             profilu.</span>
@@ -467,6 +466,22 @@
                 return answers;
             }
 
+            var profileLink = document.getElementById('q-idg-profile');
+            var PROFILE_LINK = /^(?:(?:https?:\/\/)?(?:www\.)?ceskydiscgolf\.cz\/idg\/hraci\/(\d{1,9})(?:\/[^?#]*)?(?:[?#].*)?|(\d{1,9}))$/i;
+            var PROFILE_LINK_MESSAGE = {
+                cs: 'Tohle není odkaz na hráčský profil. Zkopíruj adresu ve tvaru https://ceskydiscgolf.cz/idg/hraci/1234, nebo pole nech prázdné.',
+                en: 'This is not a player profile link. Paste an address like https://ceskydiscgolf.cz/idg/hraci/1234, or leave the field empty.'
+            };
+
+            function checkProfileLink() {
+                var value = profileLink.value.trim();
+                var match = PROFILE_LINK.exec(value);
+                var valid = value === '' || (match !== null && Number(match[1] || match[2]) > 0);
+                profileLink.setCustomValidity(valid ? '' : PROFILE_LINK_MESSAGE[lang()]);
+            }
+
+            profileLink.addEventListener('input', checkProfileLink);
+
             function token() {
                 var field = form.querySelector('[name="cf-turnstile-response"]');
                 return field ? field.value : '';
@@ -493,6 +508,7 @@
                   told "`identificationNumber` is required" in English is no use to somebody
                   filling in a Czech form.
                 */
+                checkProfileLink();
                 if (!form.checkValidity()) {
                     form.reportValidity();
                     return;
@@ -514,6 +530,9 @@
                     identificationNumber: document.getElementById('identificationNumber').value.trim(),
                     turnstileToken: token()
                 };
+
+                var idgProfileUrl = profileLink.value.trim();
+                if (idgProfileUrl !== '') payload.idgProfileUrl = idgProfileUrl;
 
                 var answers = collectAnswers();
                 if (answers.length > 0) payload.answers = answers;
